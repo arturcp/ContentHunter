@@ -1,0 +1,5 @@
+ContentHunter.Web/bin/*
+ContentHunter.Web/obj/*
+ContentHunter.Web.suo
+Thumbs.db
+*.pdb
