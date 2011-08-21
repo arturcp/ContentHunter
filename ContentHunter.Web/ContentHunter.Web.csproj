@@ -70,8 +70,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Crawler.cs" />
-    <Compile Include="Models\IHunter.cs" />
+    <Compile Include="Models\Input.cs" />
     <Compile Include="Models\LeitoraCompulsiva.cs" />
+    <Compile Include="Models\Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

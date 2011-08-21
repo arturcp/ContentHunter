@@ -6,14 +6,14 @@ using HtmlAgilityPack;
 
 namespace ContentHunter.Web.Models
 {
-    public class LeitoraCompulsiva: Crawler, IHunter
+    public class LeitoraCompulsiva: Crawler
     {
         //Check XmlDocument for documentation on HtmlAgilityPack
-        #region IHunter Members
 
-        public string Parse(string url)
+        public override Output ParseHtml()
         {
             string result = string.Empty;
+            string url = this.Input.Url;
 
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(GetContent(url));
@@ -45,9 +45,16 @@ namespace ContentHunter.Web.Models
                 result += node.InnerText + "<br />";
             }*/
 
-            return result;
+            return new Output()
+            {
+                Content = result
+            };
         }
 
-        #endregion
+        public override Output ParseRss()
+        {
+            return new Output();
+        }
+
     }
 }

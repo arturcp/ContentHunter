@@ -12,11 +12,26 @@ namespace ContentHunter.Web.Controllers
         public ActionResult Index()
         {
             //ViewBag.Message = "Welcome to ASP.NET MVC!";
-            string url = "http://leitoracompulsiva.wordpress.com/";
+            /*string url = "http://leitoracompulsiva.wordpress.com/";
             LeitoraCompulsiva lc = new LeitoraCompulsiva();
-            string content = lc.Parse(url);
+            string content = lc.ParseHtml(url);
 
             ViewBag.Message = content;
+            return View();*/
+
+            Input input = new Input()
+            {
+                Id = 1,
+                Url = "http://leitoracompulsiva.wordpress.com/",
+                IsRecursive = false,
+                Engine = "LeitoraCompulsiva",
+                Type = Input.InputType.Html                
+            };
+
+            Output output = input.Execute();
+            
+            ViewBag.Message = output.Content;
+            
             return View();
         }
 
