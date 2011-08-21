@@ -1,5 +1,6 @@
 ﻿
 using ContentHunter.Web.Models.Util;
+using System.Collections.Generic;
 namespace ContentHunter.Web.Models
 {
     public class CrawlerResult
@@ -15,5 +16,6 @@ namespace ContentHunter.Web.Models
         public string Message { get; set; }
         public ContentHunter.Web.Models.Util.Enum.ErrorCodes ErrorCode { get; set; }
         public string ErrorMessage { get; set; }
+        public List<string> Tags { get; set; }
     }
 }

@@ -12,8 +12,7 @@ namespace ContentHunter.Web.Models.Util
             NoErrors = 0,
             NotFound = 404,
             GeneralError = 500,
-            NullInput = 1,
-            MethodNotFound = 2
+            NullInput = 1
         }
 
     }

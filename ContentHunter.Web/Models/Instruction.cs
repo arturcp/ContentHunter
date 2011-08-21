@@ -7,8 +7,14 @@ using ContentHunter.Web.Models.Engines;
 
 namespace ContentHunter.Web.Models
 {
-    public class Instruction
+    public class Instruction: ICloneable
     {
+        public Instruction()
+        {
+            Type = InputType.Html;
+            IsOriginal = true;
+        }
+
         public enum InputType {Rss, Html, Xml}
 
         public int Id { get; set; }
@@ -16,6 +22,15 @@ namespace ContentHunter.Web.Models
         public InputType Type { get; set; }
         public string Engine { get; set; }
         public bool IsRecursive { get; set; }
+        public DateTime StartedAt { get; set; }
+        public DateTime FinishedAt { get; set; }
+        public bool IsRecurrent { get; set; }
+        
+        //used on lucene index
+        public string Category { get; set; }
+
+        //used to recursive crawler, do not persist on database
+        public bool IsOriginal { get; set; }
 
         private Crawler GetEngine()
         {
@@ -29,5 +44,14 @@ namespace ContentHunter.Web.Models
             return GetEngine().Execute();
         }
 
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
+        #endregion
     }
 }

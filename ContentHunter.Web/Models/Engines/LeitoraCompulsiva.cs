@@ -16,7 +16,6 @@ namespace ContentHunter.Web.Models.Engines
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(GetContent(url));
 
-
             HtmlNodeCollection posts = doc.DocumentNode.SelectNodes("//div[@id='content']//div[@class]");
 
             foreach (HtmlNode post in posts)

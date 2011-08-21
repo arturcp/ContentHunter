@@ -26,7 +26,9 @@ namespace ContentHunter.Web.Controllers
                 Url = "http://leitoracompulsiva.wordpress.com/",
                 IsRecursive = false,
                 Engine = "LeitoraCompulsiva",
-                Type = Instruction.InputType.Html                
+                Type = Instruction.InputType.Html,
+                IsRecurrent = true,
+                Category = "Literatura"
             };
 
             CrawlerResult output = input.Execute();
