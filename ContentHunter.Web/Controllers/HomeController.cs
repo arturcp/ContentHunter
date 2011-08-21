@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ContentHunter.Web.Models;
+using ContentHunter.Web.Models.Engines;
 
 namespace ContentHunter.Web.Controllers
 {
@@ -19,19 +20,20 @@ namespace ContentHunter.Web.Controllers
             ViewBag.Message = content;
             return View();*/
 
-            Input input = new Input()
+            Instruction input = new Instruction()
             {
                 Id = 1,
                 Url = "http://leitoracompulsiva.wordpress.com/",
                 IsRecursive = false,
                 Engine = "LeitoraCompulsiva",
-                Type = Input.InputType.Html                
+                Type = Instruction.InputType.Html                
             };
 
-            Output output = input.Execute();
+            CrawlerResult output = input.Execute();
             
             ViewBag.Message = output.Content;
-            
+            ViewBag.Engines = Crawler.GetEngines();
+
             return View();
         }
 

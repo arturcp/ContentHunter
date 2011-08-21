@@ -1,15 +1,17 @@
 ﻿using System.Net;
-using HtmlAgilityPack;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
+using ContentHunter.Web.Models;
+using ContentHunter.Web.Models.Util;
 
-namespace ContentHunter.Web.Models
+namespace ContentHunter.Web.Models.Engines
 {
     public abstract class Crawler
     {
         public int HttpCode { get; set; }
-        public Input Input { get; set; }
+        public Instruction Input { get; set; }
 
         protected List<string> CandidatesToRecursion { get; set; }
 
@@ -42,23 +44,61 @@ namespace ContentHunter.Web.Models
             return content;
         }
 
-        public Output Execute()
+        public CrawlerResult Execute()
         {
-            Output output = new Output();
+            CrawlerResult output = new CrawlerResult();
 
             if (this.Input != null)
             {
-                if (this.Input.Type == Models.Input.InputType.Html)
-                    output = this.ParseHtml();
-                else if (this.Input.Type == Models.Input.InputType.Rss)
-                    output = this.ParseRss();
-                else output.ErrorMessage = "Method not found";
+                try
+                {
+                    if (this.Input.Type == Models.Instruction.InputType.Html)
+                        output = this.ParseHtml();
+                    else if (this.Input.Type == Models.Instruction.InputType.Rss)
+                        output = this.ParseRss();
+                    else if (this.Input.Type == Models.Instruction.InputType.Xml)
+                        output = this.ParseXml();
+                    else output.ErrorCode = ContentHunter.Web.Models.Util.Enum.ErrorCodes.MethodNotFound;
+                }
+                catch(Exception error)
+                {
+                    output.ErrorCode = ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
+                    output.ErrorMessage = error.Message;
+                }
             }
-            else output.ErrorMessage = "Input cannot be null";
+            else output.ErrorCode = ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
             return output;
         }
-        public abstract Output ParseHtml();
-        public abstract Output ParseRss();
+
+        public abstract CrawlerResult ParseHtml();
+        public abstract CrawlerResult ParseRss();
+        public abstract CrawlerResult ParseXml();
+
+        public string GetFriendlyName()
+        {
+            Type t = this.GetType();
+            object[] list = t.GetCustomAttributes(typeof(ContentHunter.Web.Models.Util.FriendlyNameAttribute), false);
+
+            if (list.Length > 0)
+                return ((FriendlyNameAttribute)list[0]).Name;
+            else
+                return string.Empty;
+        }
+
+        public static List<Engine> GetEngines()
+        {
+            string path = System.Web.HttpContext.Current.Server.MapPath("~/Models/Engines");
+            string[] files = Directory.GetFiles(path);
+            List<Engine> list = new List<Engine>();
+
+            foreach (string file in files)
+            {
+                Crawler crawler = (Crawler)Assembly.GetExecutingAssembly().CreateInstance(string.Format("ContentHunter.Web.Models.Engines.{0}", Path.GetFileNameWithoutExtension(file)));
+                list.Add(new Engine() { ClassName = Path.GetFileNameWithoutExtension(file), FriendlyName = crawler.GetFriendlyName() });
+            }
+
+            return list;
+        }
     }
 }

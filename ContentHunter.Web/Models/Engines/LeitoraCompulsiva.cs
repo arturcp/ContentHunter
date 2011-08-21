@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
+using ContentHunter.Web.Models.Util;
 
-namespace ContentHunter.Web.Models
+namespace ContentHunter.Web.Models.Engines
 {
+    [FriendlyNameAttribute("Leitora Compulsiva")]
     public class LeitoraCompulsiva: Crawler
     {
         //Check XmlDocument for documentation on HtmlAgilityPack
 
-        public override Output ParseHtml()
+        public override CrawlerResult ParseHtml()
         {
             string result = string.Empty;
             string url = this.Input.Url;
@@ -35,25 +33,21 @@ namespace ContentHunter.Web.Models
                     //result += content.InnerText + "<br /><hr>";
             }
 
-
-
-            /*HtmlNodeCollection titles = doc.DocumentNode.SelectNodes("//h3[@class='storytitle']");
-
-            foreach(HtmlNode node in titles)
+            return new CrawlerResult()
             {
-                //result += HttpUtility.HtmlDecode(node.InnerText) + "<br />";
-                result += node.InnerText + "<br />";
-            }*/
-
-            return new Output()
-            {
-                Content = result
+                Content = result,
+                Title = string.Empty
             };
         }
 
-        public override Output ParseRss()
+        public override CrawlerResult ParseRss()
         {
-            return new Output();
+            return new CrawlerResult();
+        }
+
+        public override CrawlerResult ParseXml()
+        {
+            return new CrawlerResult();
         }
 
     }
