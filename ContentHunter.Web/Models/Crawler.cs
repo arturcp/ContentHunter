@@ -72,7 +72,7 @@ namespace ContentHunter.Web.Models.Engines
                     if (instruction.IsOriginal)
                         instruction.StartedAt = DateTime.Now;
 
-                    output = ExecuteByType(instruction.Type);
+                    output = ExecuteByType((Instruction.InputType) instruction.Type);
 
                     //if input is recursive, iterate on link candidates and execute, without saving input timespan!
                     if (instruction.IsRecursive)

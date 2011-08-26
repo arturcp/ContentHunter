@@ -4,22 +4,28 @@ using System.Linq;
 using System.Web;
 using System.Reflection;
 using ContentHunter.Web.Models.Engines;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContentHunter.Web.Models
 {
-    public class Instruction: ICloneable
+    public class Instruction: BaseModel, ICloneable
     {
         public Instruction()
         {
-            Type = InputType.Html;
+            Type = GetType(InputType.Html);
             IsOriginal = true;
         }
 
-        public enum InputType {Rss, Html, Xml}
+        public enum InputType : short {Rss, Html, Xml}
+
+        public static short GetType(InputType type)
+        {
+            return (short)type;
+        }
 
         public int Id { get; set; }
         public string Url { get; set; }
-        public InputType Type { get; set; }
+        public short Type { get; set; }
         public string Engine { get; set; }
         public bool IsRecursive { get; set; }
         public DateTime StartedAt { get; set; }
@@ -30,6 +36,7 @@ namespace ContentHunter.Web.Models
         public string Category { get; set; }
 
         //used to recursive crawler, do not persist on database
+        [NotMapped]
         public bool IsOriginal { get; set; }
 
         private Crawler GetEngine()

@@ -26,10 +26,20 @@ namespace ContentHunter.Web.Controllers
                 Url = "http://leitoracompulsiva.wordpress.com/",
                 IsRecursive = false,
                 Engine = "LeitoraCompulsiva",
-                Type = Instruction.InputType.Html,
+                Type = Instruction.GetType(Instruction.InputType.Html),
                 IsRecurrent = true,
                 Category = "Literatura"
             };
+
+            /*ContentHunterDB db = new ContentHunterDB();
+            db.Instructions.Add(input);
+            db.SaveChanges();*/
+
+            ContentHunterDB db = new ContentHunterDB();
+            string[] ids = { "1" };
+            var aux = db.Instructions.FindByIds<Instruction>(ids);
+            //var aux = db.Instructions.SqlQuery("Select Id", new { });
+                
 
             CrawlerResult output = input.Execute();
             
