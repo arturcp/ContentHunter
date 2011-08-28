@@ -74,10 +74,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ContentHunterDB.cs" />
-    <Compile Include="Models\Engine.cs" />
+    <Compile Include="Models\Context\ContentHunterDB.cs" />
+    <Compile Include="Models\Base\Engine.cs" />
     <Compile Include="Models\Util\Enum.cs" />
-    <Compile Include="Models\Crawler.cs" />
+    <Compile Include="Models\Base\Crawler.cs" />
     <Compile Include="Models\Util\FriendlyNameAttribute.cs" />
     <Compile Include="Models\Instruction.cs" />
     <Compile Include="Models\Engines\LeitoraCompulsiva.cs" />
