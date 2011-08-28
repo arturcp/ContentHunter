@@ -20,7 +20,7 @@
             <%: Html.LabelFor(model => model.Url) %>
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Url) %>
+            <%: Html.TextBoxFor(model => model.Url, new {@class = "urlInput", maxlength = 200 }) %>
             <%: Html.ValidationMessageFor(model => model.Url) %>
         </div>
 
@@ -28,7 +28,11 @@
             <%: Html.LabelFor(model => model.Type) %>
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Type) %>
+            <select name="Type">
+                <option value="0">Rss</option>
+                <option value="1">Html</option>
+                <option value="2">Xml</option>
+            </select>
             <%: Html.ValidationMessageFor(model => model.Type) %>
         </div>
 
@@ -38,14 +42,6 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Engine) %>
             <%: Html.ValidationMessageFor(model => model.Engine) %>
-        </div>
-
-        <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsRecursive) %>
-        </div>
-        <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsRecursive) %>
-            <%: Html.ValidationMessageFor(model => model.IsRecursive) %>
         </div>
 
         <div class="editor-label">
@@ -65,10 +61,24 @@
         </div>
 
         <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsRecurrent) %>
+            Is Recursive?
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsRecurrent) %>
+            <select name="IsRecursive">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select>
+            <%: Html.ValidationMessageFor(model => model.IsRecursive) %>
+        </div>
+
+        <div class="editor-label">
+            Is Recurrent?
+        </div>
+        <div class="editor-field">
+            <select name="IsRecurrent">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select>
             <%: Html.ValidationMessageFor(model => model.IsRecurrent) %>
         </div>
 
@@ -78,15 +88,7 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Category) %>
             <%: Html.ValidationMessageFor(model => model.Category) %>
-        </div>
-
-        <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsOriginal) %>
-        </div>
-        <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsOriginal) %>
-            <%: Html.ValidationMessageFor(model => model.IsOriginal) %>
-        </div>
+        </div>   
 
         <p>
             <input type="submit" value="Create" />

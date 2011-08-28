@@ -1,14 +1,11 @@
 ﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
-    Home Page
+    Content Hunter
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <h2></h2>
-    <p>
-        To learn more about ASP.NET MVC visit <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
-    </p>
+    <h2>Home Page</h2>   
     <p>
         <select>
         <% foreach (ContentHunter.Web.Models.Engine engine in ViewBag.Engines){ %>
@@ -16,7 +13,10 @@
 	    <% }  %>
         </select>
     </p>
-    <p>
-        <%= ViewBag.Message %>
-    </p>
+    <% if (ViewBag.Message != null)
+       { %>
+        <p>
+            <%= ViewBag.Message%>
+        </p>
+    <% } %>
 </asp:Content>

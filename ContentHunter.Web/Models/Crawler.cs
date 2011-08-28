@@ -5,6 +5,7 @@ using System;
 using System.Reflection;
 using ContentHunter.Web.Models;
 using ContentHunter.Web.Models.Util;
+using System.Linq;
 
 namespace ContentHunter.Web.Models.Engines
 {
@@ -21,9 +22,11 @@ namespace ContentHunter.Web.Models.Engines
             CandidatesToRecursion = new List<string>();
         }
 
-        public abstract CrawlerResult ParseHtml();
-        public abstract CrawlerResult ParseRss();
-        public abstract CrawlerResult ParseXml();
+        public abstract List<CrawlerResult> ParseHtml();
+        public abstract List<CrawlerResult> ParseRss();
+        public abstract List<CrawlerResult> ParseXml();
+
+        private ContentHunterDB db = new ContentHunterDB();
         
         public string GetContent(string url)
         {
@@ -48,9 +51,9 @@ namespace ContentHunter.Web.Models.Engines
             return content;
         }
 
-        private CrawlerResult ExecuteByType(Models.Instruction.InputType type)
+        private List<CrawlerResult> ExecuteByType(Models.Instruction.InputType type)
         {
-            CrawlerResult output = new CrawlerResult();
+            List<CrawlerResult> output = null;
             if (type == Models.Instruction.InputType.Html)
                 output = this.ParseHtml();
             else if (type == Models.Instruction.InputType.Rss)
@@ -60,10 +63,10 @@ namespace ContentHunter.Web.Models.Engines
             return output;
         }
 
-        private CrawlerResult Execute(Instruction instruction)
+        private List<CrawlerResult> Execute(Instruction instruction)
         {
             //cannot execute if it is not recurrent and it was already run
-            CrawlerResult output = new CrawlerResult();
+            List<CrawlerResult> outputs = new List<CrawlerResult>();
 
             if (instruction != null)
             {
@@ -72,7 +75,15 @@ namespace ContentHunter.Web.Models.Engines
                     if (instruction.IsOriginal)
                         instruction.StartedAt = DateTime.Now;
 
-                    output = ExecuteByType((Instruction.InputType) instruction.Type);
+                    outputs = ExecuteByType((Instruction.InputType) instruction.Type);
+
+                    foreach (CrawlerResult result in outputs)
+                    {
+                        if (!ContentExists(result.Url))
+                            db.CrawlerResults.Add(result);
+                    }
+
+                    db.SaveChanges();
 
                     //if input is recursive, iterate on link candidates and execute, without saving input timespan!
                     if (instruction.IsRecursive)
@@ -88,16 +99,25 @@ namespace ContentHunter.Web.Models.Engines
                 }
                 catch (Exception error)
                 {
-                    output.ErrorCode = ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
-                    output.ErrorMessage = error.Message;
+                    //outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
+                    //outputs.ErrorMessage = error.Message;
                 }
             }
-            else output.ErrorCode = ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
+            //else outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
-            return output;
+            return outputs;
         }
 
-        public CrawlerResult Execute()
+        public bool ContentExists(string url)
+        {
+            List<CrawlerResult> list = (from r in db.CrawlerResults
+                        where r.Url == url
+                        select r).ToList<CrawlerResult>();
+
+            return list.Count > 0;                 
+        }
+
+        public List<CrawlerResult> Execute()
         {
             return Execute(this.Input);
         }

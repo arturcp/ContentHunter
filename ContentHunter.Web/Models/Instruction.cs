@@ -5,10 +5,11 @@ using System.Web;
 using System.Reflection;
 using ContentHunter.Web.Models.Engines;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace ContentHunter.Web.Models
 {
-    public class Instruction: BaseModel, ICloneable
+    public class Instruction: ICloneable
     {
         public Instruction()
         {
@@ -24,15 +25,27 @@ namespace ContentHunter.Web.Models
         }
 
         public int Id { get; set; }
+
+        [Required, StringLength(200)]
         public string Url { get; set; }
+        
+        [Required]
         public short Type { get; set; }
+
+        [Required, StringLength(45)]
         public string Engine { get; set; }
+        
+        [Required]
         public bool IsRecursive { get; set; }
+        
         public DateTime StartedAt { get; set; }
         public DateTime FinishedAt { get; set; }
+        
+        [Required]
         public bool IsRecurrent { get; set; }
         
         //used on lucene index
+        [StringLength(50)]
         public string Category { get; set; }
 
         //used to recursive crawler, do not persist on database
@@ -46,7 +59,7 @@ namespace ContentHunter.Web.Models
             return crawler;
         }
 
-        public CrawlerResult Execute()
+        public List<CrawlerResult> Execute()
         {
             return GetEngine().Execute();
         }

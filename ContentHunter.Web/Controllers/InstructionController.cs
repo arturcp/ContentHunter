@@ -22,15 +22,6 @@ namespace ContentHunter.Web.Controllers
         }
 
         //
-        // GET: /Instruction/Details/5
-
-        public ViewResult Details(int id)
-        {
-            Instruction instruction = db.Instructions.Find(id);
-            return View(instruction);
-        }
-
-        //
         // GET: /Instruction/Create
 
         public ActionResult Create()

@@ -9,7 +9,7 @@
 <h2>Index</h2>
 
 <p>
-    <%: Html.ActionLink("Create New", "Create") %>
+    <%: Html.ActionLink("Create Instruction", "Create") %>
 </p>
 <table>
     <tr>
@@ -23,22 +23,19 @@
             Engine
         </th>
         <th>
-            IsRecursive
+            Started at
         </th>
         <th>
-            StartedAt
+            Finished at
         </th>
         <th>
-            FinishedAt
+            Recursive?
         </th>
         <th>
-            IsRecurrent
+            Recurrent?
         </th>
         <th>
             Category
-        </th>
-        <th>
-            IsOriginal
         </th>
         <th></th>
     </tr>
@@ -46,16 +43,13 @@
 <% foreach (var item in Model) { %>
     <tr>
         <td>
-            <%: Html.DisplayFor(modelItem => item.Url) %>
+            <a href="<%= item.Url %>"><%= item.Url %></a>
         </td>
         <td>
-            <%: Html.DisplayFor(modelItem => item.Type) %>
+            <%: item.Type == 0? "Rss" : item.Type == 1 ? "Html" : "Xml" %>
         </td>
         <td>
             <%: Html.DisplayFor(modelItem => item.Engine) %>
-        </td>
-        <td>
-            <%: Html.DisplayFor(modelItem => item.IsRecursive) %>
         </td>
         <td>
             <%: Html.DisplayFor(modelItem => item.StartedAt) %>
@@ -64,17 +58,16 @@
             <%: Html.DisplayFor(modelItem => item.FinishedAt) %>
         </td>
         <td>
-            <%: Html.DisplayFor(modelItem => item.IsRecurrent) %>
+            <%: item.IsRecursive? "Yes": "No" %>
+        </td>
+        <td>
+            <%: item.IsRecurrent? "Yes": "No" %>
         </td>
         <td>
             <%: Html.DisplayFor(modelItem => item.Category) %>
         </td>
         <td>
-            <%: Html.DisplayFor(modelItem => item.IsOriginal) %>
-        </td>
-        <td>
             <%: Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |
-            <%: Html.ActionLink("Details", "Details", new { id=item.Id }) %> |
             <%: Html.ActionLink("Delete", "Delete", new { id=item.Id }) %>
         </td>
     </tr>

@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using ContentHunter.Web.Models.Util;
+using System.Collections.Generic;
 
 namespace ContentHunter.Web.Models.Engines
 {
@@ -8,9 +9,13 @@ namespace ContentHunter.Web.Models.Engines
     {
         //Check XmlDocument for documentation on HtmlAgilityPack
 
-        public override CrawlerResult ParseHtml()
+        private string Engine = "LeitoraCompulsiva";
+
+        public override List<CrawlerResult> ParseHtml()
         {
-            string result = string.Empty;
+            List<CrawlerResult> list = new List<CrawlerResult>();
+            CrawlerResult output = null;
+
             string url = this.Input.Url;
 
             HtmlDocument doc = new HtmlDocument();
@@ -20,33 +25,34 @@ namespace ContentHunter.Web.Models.Engines
 
             foreach (HtmlNode post in posts)
             {
+                output = new CrawlerResult();
                 HtmlNode title = post.SelectSingleNode(".//h3[@class='storytitle']");
-                //result += HttpUtility.HtmlDecode(node.InnerText) + "<br />";
-                if (title != null)
-                    result += title.InnerText + "<br />";
-
                 HtmlNode content = post.SelectSingleNode(".//div[@class='storycontent']");
 
-                if (content != null)
-                    result += content.InnerHtml + "<br /><hr>";
-                    //result += content.InnerText + "<br /><hr>";
+                if (title != null && content != null)
+                {
+                    if (title.ChildNodes.Count > 0 && title.ChildNodes[0].Attributes["href"] != null)
+                        output.Url = title.ChildNodes[0].Attributes["href"].Value;
+
+                    output.Title = System.Web.HttpUtility.HtmlDecode(title.InnerText);
+                    output.Content = content.InnerHtml;
+
+                    list.Add(output);
+
+                }
             }
 
-            return new CrawlerResult()
-            {
-                Content = result,
-                Title = string.Empty
-            };
+            return list;
         }
 
-        public override CrawlerResult ParseRss()
+        public override List<CrawlerResult> ParseRss()
         {
-            return new CrawlerResult();
+            return new List<CrawlerResult>();
         }
 
-        public override CrawlerResult ParseXml()
+        public override List<CrawlerResult> ParseXml()
         {
-            return new CrawlerResult();
+            return new List<CrawlerResult>();
         }
 
     }

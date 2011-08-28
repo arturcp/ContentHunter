@@ -9,8 +9,10 @@
 <h2>Delete</h2>
 
 <h3>Are you sure you want to delete this?</h3>
-<fieldset>
+<fieldset id="deleteConfirmation">
     <legend>Instruction</legend>
+
+    <% var item = ViewData.Model; %>
 
     <div class="display-label">Url</div>
     <div class="display-field">
@@ -19,17 +21,12 @@
 
     <div class="display-label">Type</div>
     <div class="display-field">
-        <%: Html.DisplayFor(model => model.Type) %>
+        <%: item.Type == 0? "Rss" : item.Type == 1 ? "Html" : "Xml" %>
     </div>
 
     <div class="display-label">Engine</div>
     <div class="display-field">
         <%: Html.DisplayFor(model => model.Engine) %>
-    </div>
-
-    <div class="display-label">IsRecursive</div>
-    <div class="display-field">
-        <%: Html.DisplayFor(model => model.IsRecursive) %>
     </div>
 
     <div class="display-label">StartedAt</div>
@@ -42,20 +39,21 @@
         <%: Html.DisplayFor(model => model.FinishedAt) %>
     </div>
 
+    <div class="display-label">IsRecursive</div>
+    <div class="display-field">
+        <%: item.IsRecursive? "Yes": "No" %>
+    </div>
+
     <div class="display-label">IsRecurrent</div>
     <div class="display-field">
-        <%: Html.DisplayFor(model => model.IsRecurrent) %>
+        <%: item.IsRecurrent? "Yes": "No" %>
     </div>
 
     <div class="display-label">Category</div>
     <div class="display-field">
         <%: Html.DisplayFor(model => model.Category) %>
     </div>
-
-    <div class="display-label">IsOriginal</div>
-    <div class="display-field">
-        <%: Html.DisplayFor(model => model.IsOriginal) %>
-    </div>
+       
 </fieldset>
 <% using (Html.BeginForm()) { %>
     <p>

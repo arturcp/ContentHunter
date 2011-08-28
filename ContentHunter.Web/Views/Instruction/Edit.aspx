@@ -1,12 +1,12 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.master" Inherits="System.Web.Mvc.ViewPage<ContentHunter.Web.Models.Instruction>" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.master" Inherits="System.Web.Mvc.ViewPage<ContentHunter.Web.Models.Instruction>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
-    Edit
+    Edit Instruction
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<h2>Edit</h2>
+<h2>Edit Instruction</h2>
 
 <script src="<%: Url.Content("~/Scripts/jquery.validate.min.js") %>" type="text/javascript"></script>
 <script src="<%: Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js") %>" type="text/javascript"></script>
@@ -22,7 +22,7 @@
             <%: Html.LabelFor(model => model.Url) %>
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Url) %>
+            <%: Html.TextBoxFor(model => model.Url, new {@class = "urlInput", maxlength = 200 }) %>
             <%: Html.ValidationMessageFor(model => model.Url) %>
         </div>
 
@@ -30,7 +30,11 @@
             <%: Html.LabelFor(model => model.Type) %>
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Type) %>
+            <select name="Type">
+                <option value="0" <%= ViewData.Model.Type == 0 ? "selected='selected'": "" %>>Rss</option>
+                <option value="1" <%= ViewData.Model.Type == 1 ? "selected='selected'" : "" %>>Html</option>
+                <option value="2" <%= ViewData.Model.Type == 2 ? "selected='selected'": "" %>>Xml</option>
+            </select>
             <%: Html.ValidationMessageFor(model => model.Type) %>
         </div>
 
@@ -40,14 +44,6 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Engine) %>
             <%: Html.ValidationMessageFor(model => model.Engine) %>
-        </div>
-
-        <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsRecursive) %>
-        </div>
-        <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsRecursive) %>
-            <%: Html.ValidationMessageFor(model => model.IsRecursive) %>
         </div>
 
         <div class="editor-label">
@@ -67,10 +63,24 @@
         </div>
 
         <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsRecurrent) %>
+            Is Recursive?
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsRecurrent) %>
+            <select name="IsRecursive">
+                <option value="false" <%= ViewData.Model.IsRecursive? "" : "selected='selected'" %>>No</option>
+                <option value="true" <%= ViewData.Model.IsRecursive? "selected='selected'" : "" %>>Yes</option>
+            </select>
+        </div>
+
+        <div class="editor-label">
+            Is Recurrent?
+        </div>
+        <div class="editor-field">
+            <select name="IsRecurrent">
+                <option value="false" <%= ViewData.Model.IsRecurrent? "" : "selected='selected'" %>>No</option>
+                <option value="true" <%= ViewData.Model.IsRecurrent? "selected='selected'" : "" %>>Yes</option>
+            </select>
+
             <%: Html.ValidationMessageFor(model => model.IsRecurrent) %>
         </div>
 
@@ -80,15 +90,7 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Category) %>
             <%: Html.ValidationMessageFor(model => model.Category) %>
-        </div>
-
-        <div class="editor-label">
-            <%: Html.LabelFor(model => model.IsOriginal) %>
-        </div>
-        <div class="editor-field">
-            <%: Html.EditorFor(model => model.IsOriginal) %>
-            <%: Html.ValidationMessageFor(model => model.IsOriginal) %>
-        </div>
+        </div>     
 
         <p>
             <input type="submit" value="Save" />

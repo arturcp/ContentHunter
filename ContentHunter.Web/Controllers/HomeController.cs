@@ -10,6 +10,8 @@ namespace ContentHunter.Web.Controllers
 {
     public class HomeController : Controller
     {
+        ContentHunterDB db = new ContentHunterDB();
+
         public ActionResult Index()
         {
             //ViewBag.Message = "Welcome to ASP.NET MVC!";
@@ -20,7 +22,7 @@ namespace ContentHunter.Web.Controllers
             ViewBag.Message = content;
             return View();*/
 
-            Instruction input = new Instruction()
+            /*Instruction input = new Instruction()
             {
                 Id = 1,
                 Url = "http://leitoracompulsiva.wordpress.com/",
@@ -29,28 +31,25 @@ namespace ContentHunter.Web.Controllers
                 Type = Instruction.GetType(Instruction.InputType.Html),
                 IsRecurrent = true,
                 Category = "Literatura"
-            };
+            };*/
+
+            Instruction input = db.Instructions.First<Instruction>();
 
             /*ContentHunterDB db = new ContentHunterDB();
             db.Instructions.Add(input);
             db.SaveChanges();*/
 
-            ContentHunterDB db = new ContentHunterDB();
-            string[] ids = { "1" };
-            var aux = db.Instructions.FindByIds<Instruction>(ids);
-            //var aux = db.Instructions.SqlQuery("Select Id", new { });
-                
+            List<CrawlerResult> outputs = input.Execute();
 
-            CrawlerResult output = input.Execute();
+           /* if (ModelState.IsValid)
+            {
+                db.CrawlerResults.Add(output);
+                db.SaveChanges();
+            }*/
             
-            ViewBag.Message = output.Content;
+            //ViewBag.Message = output.Content;
             ViewBag.Engines = Crawler.GetEngines();
 
-            return View();
-        }
-
-        public ActionResult About()
-        {
             return View();
         }
     }

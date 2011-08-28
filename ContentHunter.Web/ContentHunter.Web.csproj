@@ -74,10 +74,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\ContentHunterDB.cs" />
     <Compile Include="Models\Engine.cs" />
-    <Compile Include="Models\ExtensionMethods.cs" />
     <Compile Include="Models\Util\Enum.cs" />
     <Compile Include="Models\Crawler.cs" />
     <Compile Include="Models\Util\FriendlyNameAttribute.cs" />
@@ -127,7 +125,6 @@
     <Content Include="Scripts\modernizr-1.7.min.js" />
     <Content Include="Views\Instruction\Create.aspx" />
     <Content Include="Views\Instruction\Delete.aspx" />
-    <Content Include="Views\Instruction\Details.aspx" />
     <Content Include="Views\Instruction\Edit.aspx" />
     <Content Include="Views\Instruction\Index.aspx" />
     <Content Include="Web.config" />
@@ -148,7 +145,6 @@
     <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Home\About.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Shared\Error.aspx" />
     <Content Include="Views\Shared\LogOnUserControl.ascx" />
