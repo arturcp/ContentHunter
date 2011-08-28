@@ -28,7 +28,7 @@ namespace ContentHunter.Web.Models.Engines
                 output = new CrawlerResult();
                 HtmlNode title = post.SelectSingleNode(".//h3[@class='storytitle']");
                 HtmlNode content = post.SelectSingleNode(".//div[@class='storycontent']");
-                HtmlNodeCollection tags = post.SelectNodes(".//div[@id='meta']//a");
+                HtmlNodeCollection tags = post.SelectNodes(".//div[@class='meta']//a");
 
                 if (title != null && content != null)
                 {
