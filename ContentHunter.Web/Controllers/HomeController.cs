@@ -33,13 +33,13 @@ namespace ContentHunter.Web.Controllers
                 Category = "Literatura"
             };*/
 
-            Instruction input = db.Instructions.First<Instruction>();
+            //Instruction input = db.Instructions.First<Instruction>();
 
             /*ContentHunterDB db = new ContentHunterDB();
             db.Instructions.Add(input);
             db.SaveChanges();*/
 
-            List<CrawlerResult> outputs = input.Execute();
+            //List<CrawlerResult> outputs = input.Execute();
 
            /* if (ModelState.IsValid)
             {
@@ -51,6 +51,25 @@ namespace ContentHunter.Web.Controllers
             ViewBag.Engines = Crawler.GetEngines();
 
             return View();
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(FormCollection form)
+        {
+            List<Instruction> instructions = db.Instructions.ToList<Instruction>();
+
+            foreach (Instruction input in instructions)
+            {
+                input.Execute();
+            }
+
+            ViewBag.Message = "Instructions executed";
+            return View("Create");
         }
     }
 }

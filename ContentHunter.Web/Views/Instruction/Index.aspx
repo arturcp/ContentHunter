@@ -35,7 +35,7 @@
             Recurrent?
         </th>
         <th>
-            Category
+            Categories
         </th>
         <th></th>
     </tr>
@@ -64,7 +64,7 @@
             <%: item.IsRecurrent? "Yes": "No" %>
         </td>
         <td>
-            <%: Html.DisplayFor(modelItem => item.Category) %>
+            <%: Html.DisplayFor(modelItem => item.Categories) %>
         </td>
         <td>
             <%: Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |

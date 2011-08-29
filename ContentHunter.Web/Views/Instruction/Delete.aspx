@@ -51,7 +51,7 @@
 
     <div class="display-label">Category</div>
     <div class="display-field">
-        <%: Html.DisplayFor(model => model.Category) %>
+        <%: Html.DisplayFor(model => model.Categories) %>
     </div>
        
 </fieldset>

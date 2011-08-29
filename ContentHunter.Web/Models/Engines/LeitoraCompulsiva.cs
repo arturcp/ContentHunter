@@ -20,9 +20,15 @@ namespace ContentHunter.Web.Models.Engines
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(GetContent(url));
 
-            //HtmlNodeCollection posts = doc.DocumentNode.SelectNodes("//div[@id='content']//div[@class='post']");
             HtmlNodeCollection posts = doc.DocumentNode.SelectNodes("//div[@id='content']//div[contains(@class,'post') and contains(@class,'status-publish')]");
 
+            HtmlNodeCollection candidateLinks = doc.DocumentNode.SelectNodes("//div[@id='postnav']//a[contains(.,'Próxima')]");
+
+            foreach (var link in candidateLinks)
+            {
+                AddCandidateLink(link.Attributes["href"].Value);
+            }
+            
             foreach (HtmlNode post in posts)
             {
                 output = new CrawlerResult();
@@ -49,7 +55,6 @@ namespace ContentHunter.Web.Models.Engines
                     }
 
                     list.Add(output);
-
                 }
             }
 

@@ -40,6 +40,10 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\Dlls\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net, Version=2.9.2.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dlls\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=6.4.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -123,6 +127,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-1.7.js" />
     <Content Include="Scripts\modernizr-1.7.min.js" />
+    <Content Include="Views\Home\Create.aspx" />
     <Content Include="Views\Instruction\Create.aspx" />
     <Content Include="Views\Instruction\Delete.aspx" />
     <Content Include="Views\Instruction\Edit.aspx" />
@@ -156,6 +161,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WebToolkit\WebToolkit\WebToolkit.csproj">
+      <Project>{D503C53E-93A8-401B-826E-5A26C3EC7908}</Project>
+      <Name>WebToolkit</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

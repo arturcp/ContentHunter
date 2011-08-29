@@ -6,13 +6,11 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <h2>Home Page</h2>   
+
     <p>
-        <select>
-        <% foreach (ContentHunter.Web.Models.Engine engine in ViewBag.Engines){ %>
-		    <option value="<%= engine.ClassName %>"><%= engine.FriendlyName %></option>
-	    <% }  %>
-        </select>
+        Welcome to Content Hunter Admin Page. Use the tabs above to configure your application.
     </p>
+    
     <% if (ViewBag.Message != null)
        { %>
         <p>

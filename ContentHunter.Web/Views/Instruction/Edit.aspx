@@ -42,7 +42,12 @@
             <%: Html.LabelFor(model => model.Engine) %>
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Engine) %>
+            <select name="Engine">
+            <% foreach (ContentHunter.Web.Models.Engine engine in ViewBag.Engines){ %>
+		        <option value="<%= engine.ClassName %>"><%= engine.FriendlyName %></option>
+	        <% }  %>
+            </select>
+            
             <%: Html.ValidationMessageFor(model => model.Engine) %>
         </div>
 
@@ -85,11 +90,11 @@
         </div>
 
         <div class="editor-label">
-            <%: Html.LabelFor(model => model.Category) %>
+            <%: Html.LabelFor(model => model.Categories) %> (split by commas)
         </div>
         <div class="editor-field">
-            <%: Html.EditorFor(model => model.Category) %>
-            <%: Html.ValidationMessageFor(model => model.Category) %>
+            <%: Html.EditorFor(model => model.Categories)%>
+            <%: Html.ValidationMessageFor(model => model.Categories)%>
         </div>     
 
         <p>

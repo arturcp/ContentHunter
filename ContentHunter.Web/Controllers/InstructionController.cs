@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using ContentHunter.Web.Models;
+using ContentHunter.Web.Models.Engines;
 
 namespace ContentHunter.Web.Controllers
 { 
@@ -26,6 +27,7 @@ namespace ContentHunter.Web.Controllers
 
         public ActionResult Create()
         {
+            ViewBag.Engines = Crawler.GetEngines();
             return View();
         } 
 
@@ -51,6 +53,7 @@ namespace ContentHunter.Web.Controllers
         public ActionResult Edit(int id)
         {
             Instruction instruction = db.Instructions.Find(id);
+            ViewBag.Engines = Crawler.GetEngines();
             return View(instruction);
         }
 

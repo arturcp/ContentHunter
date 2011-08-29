@@ -45,8 +45,8 @@ namespace ContentHunter.Web.Models
         public bool IsRecurrent { get; set; }
         
         //used on lucene index
-        [StringLength(50)]
-        public string Category { get; set; }
+        [StringLength(500)]
+        public string Categories { get; set; }
 
         //used to recursive crawler, do not persist on database
         [NotMapped]

@@ -6,6 +6,9 @@ using System.Reflection;
 using ContentHunter.Web.Models;
 using ContentHunter.Web.Models.Util;
 using System.Linq;
+using WebToolkit.Index;
+using Lucene.Net.Documents;
+using System.Data;
 
 namespace ContentHunter.Web.Models.Engines
 {
@@ -15,6 +18,12 @@ namespace ContentHunter.Web.Models.Engines
         public Instruction Input { get; set; }
 
         protected List<string> CandidatesToRecursion { get; set; }
+
+        public void AddCandidateLink(string link)
+        {
+            if (!CandidatesToRecursion.Contains(link))
+                CandidatesToRecursion.Add(link);
+        }
 
         public Crawler()
         {
@@ -77,25 +86,36 @@ namespace ContentHunter.Web.Models.Engines
 
                     outputs = ExecuteByType((Instruction.InputType) instruction.Type);
 
+                    List<CrawlerResult> toSave = new List<CrawlerResult>();
                     foreach (CrawlerResult result in outputs)
                     {
                         if (!ContentExists(result.Url))
+                        {
                             db.CrawlerResults.Add(result);
+                            toSave.Add(result);
+                        }
                     }
 
                     db.SaveChanges();
+                    Index(toSave);
 
-                    //if input is recursive, iterate on link candidates and execute, without saving input timespan!
-                    if (instruction.IsRecursive)
-                    {
-                        //foreach (var item in collection)
-                        //{
-                            
-                        //}
-                    }
+                    //if (instruction.IsRecursive)
+                    //{
+                    //    Instruction recursiveInstruction = (Instruction)instruction.Clone();
+                    //    recursiveInstruction.IsOriginal = false;
+                    //    foreach (string link in CandidatesToRecursion)
+                    //    {
+                    //        recursiveInstruction.Url = link;
+                    //        Execute(recursiveInstruction);
+                    //    }
+                    //}
 
                     if (instruction.IsOriginal)
+                    {
                         instruction.FinishedAt = DateTime.Now;
+                        db.Entry(instruction).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
                 }
                 catch (Exception error)
                 {
@@ -106,6 +126,24 @@ namespace ContentHunter.Web.Models.Engines
             //else outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
             return outputs;
+        }
+
+        private void Index(List<CrawlerResult> results)
+        {
+            IndexManager indexManager = new IndexManager();
+            List<Field> fields = null;
+            foreach (CrawlerResult result in results)
+            {
+                if (result.Id > 0)
+                {
+                    fields = new List<Field>();
+                    fields.Add(new Field("Id", result.Id.ToString(), Field.Store.YES, Field.Index.NO));
+                    fields.Add(new Field("Url", result.Url, Field.Store.YES, Field.Index.NO));
+                    fields.Add(new Field("Tags", result.Tags, Field.Store.YES, Field.Index.ANALYZED));
+                    fields.Add(new Field("Categories", Input.Categories, Field.Store.YES, Field.Index.ANALYZED));
+                    indexManager.Index(fields);
+                }
+            }
         }
 
         public bool ContentExists(string url)
