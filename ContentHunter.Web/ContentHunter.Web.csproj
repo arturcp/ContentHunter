@@ -78,6 +78,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ContextResult.cs" />
     <Compile Include="Models\Context\ContentHunterDB.cs" />
     <Compile Include="Models\Base\Engine.cs" />
     <Compile Include="Models\Util\Enum.cs" />

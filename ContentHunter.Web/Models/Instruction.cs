@@ -59,7 +59,7 @@ namespace ContentHunter.Web.Models
             return crawler;
         }
 
-        public List<CrawlerResult> Execute()
+        public ContextResult Execute()
         {
             return GetEngine().Execute();
         }

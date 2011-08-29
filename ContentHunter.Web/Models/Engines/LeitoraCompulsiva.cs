@@ -10,12 +10,12 @@ namespace ContentHunter.Web.Models.Engines
         //Check XmlDocument for documentation on HtmlAgilityPack
         //XPath cheat sheet http://xpath.alephzarro.com/content/cheatsheet.html
 
-        public override List<CrawlerResult> ParseHtml()
+        public override ContextResult ParseHtml(Instruction instruction)
         {
-            List<CrawlerResult> list = new List<CrawlerResult>();
+            ContextResult context = new ContextResult();
             CrawlerResult output = null;
 
-            string url = this.Input.Url;
+            string url = instruction.Url;
 
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(GetContent(url));
@@ -26,7 +26,7 @@ namespace ContentHunter.Web.Models.Engines
 
             foreach (var link in candidateLinks)
             {
-                AddCandidateLink(link.Attributes["href"].Value);
+                AddCandidateLink(context, link.Attributes["href"].Value);
             }
             
             foreach (HtmlNode post in posts)
@@ -54,21 +54,21 @@ namespace ContentHunter.Web.Models.Engines
                         output.Tags = string.Join(", ", postTags.ToArray());
                     }
 
-                    list.Add(output);
+                    context.Results.Add(output);
                 }
             }
 
-            return list;
+            return context;
         }
 
-        public override List<CrawlerResult> ParseRss()
+        public override ContextResult ParseRss(Instruction instruction)
         {
-            return new List<CrawlerResult>();
+            return new ContextResult();
         }
 
-        public override List<CrawlerResult> ParseXml()
+        public override ContextResult ParseXml(Instruction instruction)
         {
-            return new List<CrawlerResult>();
+            return new ContextResult();
         }
 
     }

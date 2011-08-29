@@ -17,23 +17,23 @@ namespace ContentHunter.Web.Models.Engines
         public int HttpCode { get; set; }
         public Instruction Input { get; set; }
 
-        protected List<string> CandidatesToRecursion { get; set; }
+        protected List<string> VisitedLinks { get; set; }
 
-        public void AddCandidateLink(string link)
+        public void AddCandidateLink(ContextResult contextResult, string link)
         {
-            if (!CandidatesToRecursion.Contains(link))
-                CandidatesToRecursion.Add(link);
+            if (!VisitedLinks.Contains(link))
+                contextResult.CandidatesToRecursion.Add(link);
         }
 
         public Crawler()
         {
             HttpCode = 200;
-            CandidatesToRecursion = new List<string>();
+            VisitedLinks = new List<string>();
         }
 
-        public abstract List<CrawlerResult> ParseHtml();
-        public abstract List<CrawlerResult> ParseRss();
-        public abstract List<CrawlerResult> ParseXml();
+        public abstract ContextResult ParseHtml(Instruction instruction);
+        public abstract ContextResult ParseRss(Instruction instruction);
+        public abstract ContextResult ParseXml(Instruction instruction);
 
         private ContentHunterDB db = new ContentHunterDB();
         
@@ -60,34 +60,37 @@ namespace ContentHunter.Web.Models.Engines
             return content;
         }
 
-        private List<CrawlerResult> ExecuteByType(Models.Instruction.InputType type)
+        private ContextResult ExecuteByType(Instruction instruction)
         {
-            List<CrawlerResult> output = null;
+            this.VisitedLinks.Add(instruction.Url);
+            Models.Instruction.InputType type = (Models.Instruction.InputType)instruction.Type;
+            ContextResult output = null;
             if (type == Models.Instruction.InputType.Html)
-                output = this.ParseHtml();
+                output = this.ParseHtml(instruction);
             else if (type == Models.Instruction.InputType.Rss)
-                output = this.ParseRss();
+                output = this.ParseRss(instruction);
             else if (type == Models.Instruction.InputType.Xml)
-                output = this.ParseXml();
+                output = this.ParseXml(instruction);
             return output;
         }
 
-        private List<CrawlerResult> Execute(Instruction instruction)
+        private ContextResult Execute(Instruction instruction)
         {
             //cannot execute if it is not recurrent and it was already run
-            List<CrawlerResult> outputs = new List<CrawlerResult>();
+            ContextResult context = new ContextResult();
 
             if (instruction != null)
             {
-                try
-                {
+                //try
+                //{
                     if (instruction.IsOriginal)
                         instruction.StartedAt = DateTime.Now;
 
-                    outputs = ExecuteByType((Instruction.InputType) instruction.Type);
+                    //this.
+                    context = ExecuteByType(instruction);
 
                     List<CrawlerResult> toSave = new List<CrawlerResult>();
-                    foreach (CrawlerResult result in outputs)
+                    foreach (var result in context.Results)
                     {
                         if (!ContentExists(result.Url))
                         {
@@ -99,16 +102,16 @@ namespace ContentHunter.Web.Models.Engines
                     db.SaveChanges();
                     Index(toSave);
 
-                    //if (instruction.IsRecursive)
-                    //{
-                    //    Instruction recursiveInstruction = (Instruction)instruction.Clone();
-                    //    recursiveInstruction.IsOriginal = false;
-                    //    foreach (string link in CandidatesToRecursion)
-                    //    {
-                    //        recursiveInstruction.Url = link;
-                    //        Execute(recursiveInstruction);
-                    //    }
-                    //}
+                    if (instruction.IsRecursive)
+                    {
+                        Instruction recursiveInstruction = (Instruction)instruction.Clone();
+                        recursiveInstruction.IsOriginal = false;
+                        foreach (string link in context.CandidatesToRecursion)
+                        {
+                            recursiveInstruction.Url = link;
+                            Execute(recursiveInstruction);
+                        }
+                    }
 
                     if (instruction.IsOriginal)
                     {
@@ -116,16 +119,16 @@ namespace ContentHunter.Web.Models.Engines
                         db.Entry(instruction).State = EntityState.Modified;
                         db.SaveChanges();
                     }
-                }
-                catch (Exception error)
-                {
+               // }
+               // catch (Exception error)
+               // {
                     //outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
                     //outputs.ErrorMessage = error.Message;
-                }
+              //  }
             }
             //else outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
-            return outputs;
+            return context;
         }
 
         private void Index(List<CrawlerResult> results)
@@ -155,7 +158,7 @@ namespace ContentHunter.Web.Models.Engines
             return list.Count > 0;                 
         }
 
-        public List<CrawlerResult> Execute()
+        public ContextResult Execute()
         {
             return Execute(this.Input);
         }
