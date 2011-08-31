@@ -14,6 +14,7 @@
     <AssemblyName>ContentHunter.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,6 +74,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ExecutionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstructionController.cs" />
     <Compile Include="Global.asax.cs">
@@ -128,7 +130,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-1.7.js" />
     <Content Include="Scripts\modernizr-1.7.min.js" />
-    <Content Include="Views\Home\Create.aspx" />
+    <Content Include="Views\Execution\Index.aspx" />
     <Content Include="Views\Instruction\Create.aspx" />
     <Content Include="Views\Instruction\Delete.aspx" />
     <Content Include="Views\Instruction\Edit.aspx" />

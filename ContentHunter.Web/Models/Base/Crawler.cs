@@ -86,7 +86,7 @@ namespace ContentHunter.Web.Models.Engines
                     if (instruction.IsOriginal)
                         instruction.StartedAt = DateTime.Now;
 
-                    //this.
+                    
                     context = ExecuteByType(instruction);
 
                     List<CrawlerResult> toSave = new List<CrawlerResult>();
@@ -99,8 +99,11 @@ namespace ContentHunter.Web.Models.Engines
                         }
                     }
 
-                    db.SaveChanges();
-                    Index(toSave);
+                    if (toSave.Count > 0)
+                    {
+                        db.SaveChanges();
+                        Index(toSave);
+                    }
 
                     if (instruction.IsRecursive)
                     {

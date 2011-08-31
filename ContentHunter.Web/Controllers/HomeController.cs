@@ -51,25 +51,7 @@ namespace ContentHunter.Web.Controllers
             ViewBag.Engines = Crawler.GetEngines();
 
             return View();
-        }
+        }       
 
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Create(FormCollection form)
-        {
-            List<Instruction> instructions = db.Instructions.ToList<Instruction>();
-
-            foreach (Instruction input in instructions)
-            {
-                input.Execute();
-            }
-
-            ViewBag.Message = "Instructions executed";
-            return View("Create");
-        }
     }
 }
