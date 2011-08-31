@@ -15,10 +15,10 @@ namespace ContentHunter.Web.Models
             ErrorMessage = string.Empty;
         }
 
-        [DatabaseGenerated(System.ComponentModel.DataAnnotations.DatabaseGeneratedOption.Identity)]
+        //[DatabaseGenerated(System.ComponentModel.DataAnnotations.DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
-        [Required, StringLength(100)]
+        [Required, StringLength(300)]
         public string Title { get; set; }
         
         [Required]
@@ -32,7 +32,7 @@ namespace ContentHunter.Web.Models
         [StringLength(100)]
         public string ErrorMessage { get; set; }
 
-        [StringLength(200)]
+        [Required, StringLength(200)]
         public string Url { get; set; }
 
         [StringLength(500)]
