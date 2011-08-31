@@ -36,7 +36,7 @@ namespace ContentHunter.Web.Models.Engines
         public abstract ContextResult ParseXml(Instruction instruction);
 
         private ContentHunterDB db = new ContentHunterDB();
-        
+
         public string GetContent(string url)
         {
             string content = string.Empty;
@@ -83,51 +83,55 @@ namespace ContentHunter.Web.Models.Engines
             {
                 //try
                 //{
-                    if (instruction.IsOriginal)
-                        instruction.StartedAt = DateTime.Now;
+                if (instruction.IsOriginal)
+                {
+                    instruction.StartedAt = DateTime.Now;
+                    instruction.State = true;
+                }
 
-                    
-                    context = ExecuteByType(instruction);
 
-                    List<CrawlerResult> toSave = new List<CrawlerResult>();
-                    foreach (var result in context.Results)
+                context = ExecuteByType(instruction);
+
+                List<CrawlerResult> toSave = new List<CrawlerResult>();
+                foreach (var result in context.Results)
+                {
+                    if (!ContentExists(result.Url))
                     {
-                        if (!ContentExists(result.Url))
-                        {
-                            db.CrawlerResults.Add(result);
-                            toSave.Add(result);
-                        }
+                        db.CrawlerResults.Add(result);
+                        toSave.Add(result);
                     }
+                }
 
-                    if (toSave.Count > 0)
-                    {
-                        db.SaveChanges();
-                        Index(toSave);
-                    }
+                if (toSave.Count > 0)
+                {
+                    db.SaveChanges();
+                    Index(toSave);
+                }
 
-                    if (instruction.IsRecursive)
+                if (instruction.IsRecursive)
+                {
+                    Instruction recursiveInstruction = (Instruction)instruction.Clone();
+                    recursiveInstruction.IsOriginal = false;
+                    foreach (string link in context.CandidatesToRecursion)
                     {
-                        Instruction recursiveInstruction = (Instruction)instruction.Clone();
-                        recursiveInstruction.IsOriginal = false;
-                        foreach (string link in context.CandidatesToRecursion)
-                        {
-                            recursiveInstruction.Url = link;
-                            Execute(recursiveInstruction);
-                        }
+                        recursiveInstruction.Url = link;
+                        Execute(recursiveInstruction);
                     }
+                }
 
-                    if (instruction.IsOriginal)
-                    {
-                        instruction.FinishedAt = DateTime.Now;
-                        db.Entry(instruction).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-               // }
-               // catch (Exception error)
-               // {
-                    //outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
-                    //outputs.ErrorMessage = error.Message;
-              //  }
+                if (instruction.IsOriginal)
+                {
+                    instruction.FinishedAt = DateTime.Now;
+                    instruction.State = false;
+                    db.Entry(instruction).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                // }
+                // catch (Exception error)
+                // {
+                //outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
+                //outputs.ErrorMessage = error.Message;
+                //  }
             }
             //else outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
@@ -155,10 +159,10 @@ namespace ContentHunter.Web.Models.Engines
         public bool ContentExists(string url)
         {
             List<CrawlerResult> list = (from r in db.CrawlerResults
-                        where r.Url == url
-                        select r).ToList<CrawlerResult>();
+                                        where r.Url == url
+                                        select r).ToList<CrawlerResult>();
 
-            return list.Count > 0;                 
+            return list.Count > 0;
         }
 
         public ContextResult Execute()

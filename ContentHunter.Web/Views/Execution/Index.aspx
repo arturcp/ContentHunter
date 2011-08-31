@@ -4,12 +4,18 @@
     Execute Instructions
 </asp:Content>
 
+<asp:Content ID="Content3" ContentPlaceHolderID="JavascriptContent" runat="server">
+    <script src="<%: Url.Content("~/Scripts/execution.js") %>" type="text/javascript"></script>
+</asp:Content>
+
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
 <h2>Execute Instructions</h2>
 
 <% if (ViewBag.Message != null){ %>
-    <%= ViewBag.Message %>
+    <div id="message">
+        <%= ViewBag.Message %>
+    </div>
 <% } %>
 <p>
     

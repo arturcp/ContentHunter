@@ -15,6 +15,7 @@ namespace ContentHunter.Web.Models
         {
             Type = GetType(InputType.Html);
             IsOriginal = true;
+            State = false;
         }
 
         public enum InputType : short {Rss, Html, Xml}
@@ -47,6 +48,8 @@ namespace ContentHunter.Web.Models
         //used on lucene index
         [StringLength(500)]
         public string Categories { get; set; }
+
+        public bool State { get; set; }
 
         //used to recursive crawler, do not persist on database
         [NotMapped]

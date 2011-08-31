@@ -17,6 +17,16 @@ namespace ContentHunter.Web.Controllers
             return View();
         }
 
+        public JsonResult Show()
+        {
+            var list = (from i in db.Instructions
+                       where i.State
+                       select i).ToList<Instruction>();
+
+            bool isFinished = list.Count == 0;
+            return Json(isFinished, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPost]
         public ActionResult Create(FormCollection form)
         {
@@ -28,7 +38,7 @@ namespace ContentHunter.Web.Controllers
                 new Thread(Execute).Start(input);
             }
 
-            ViewBag.Message = "Instructions executed";
+            ViewBag.Message = "Instructions are executing";
             return View("Index");
         }
 
