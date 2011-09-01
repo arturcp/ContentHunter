@@ -87,6 +87,8 @@ namespace ContentHunter.Web.Models.Engines
                 {
                     instruction.StartedAt = DateTime.Now;
                     instruction.State = true;
+                    db.Entry(instruction).State = EntityState.Modified;
+                    db.SaveChanges();
                 }
 
 

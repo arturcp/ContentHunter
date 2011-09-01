@@ -17,30 +17,41 @@ namespace ContentHunter.Web.Controllers
             return View();
         }
 
-        public JsonResult Show()
+        public JsonResult Status()
         {
             var list = (from i in db.Instructions
                        where i.State
-                       select i).ToList<Instruction>();
+                       select i.Id).ToList<int>();
 
-            bool isFinished = list.Count == 0;
-            return Json(isFinished, JsonRequestBehavior.AllowGet);
+            //bool isFinished = list.Count == 0;
+            return Json(list, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult Create(FormCollection form)
+        public ActionResult Start(int id)
         {
-
-            List<Instruction> instructions = db.Instructions.ToList<Instruction>();
-
-            foreach (Instruction input in instructions)
+            if (id <= 0)
             {
-                new Thread(Execute).Start(input);
+                List<Instruction> instructions = db.Instructions.ToList<Instruction>();
+
+                foreach (Instruction input in instructions)
+                {
+                    new Thread(Execute).Start(input);
+                }
+            }
+            else
+            {
+                Instruction instruction = db.Instructions.Find(id);
+
+                if (instruction != null)
+                    new Thread(Execute).Start(instruction);
             }
 
-            ViewBag.Message = "Instructions are executing";
-            return View("Index");
+            //ViewBag.Message = "Instructions are executing";
+            //return new RedirectResult("/Instruction");
+            return new EmptyResult();
         }
+                
 
         private void Execute(object data)
         {

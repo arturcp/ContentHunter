@@ -328,3 +328,13 @@ div#title {
 ----------------------------------------------------------*/
 .urlInput {width: 350px !important}
 #deleteConfirmation .display-label {font-weight: bold}
+
+.on {background-image: url(images/icon_led_green_12.gif);}
+.off {background-image: url(images/icon_led_red_12.gif);}
+.status 
+{
+    display:block;
+    height:12px;
+    text-indent:-9999px;
+    width:12px;   
+}

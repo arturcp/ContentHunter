@@ -21,7 +21,7 @@
     
 </p>
 
-<% using (Html.BeginForm("Create", "Execution")){ %>
+<% using (Html.BeginForm("Start", "Execution")){ %>
     <input type="submit" value="Start" />
 <% } %>
 

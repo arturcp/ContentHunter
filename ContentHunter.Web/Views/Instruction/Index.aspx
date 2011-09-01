@@ -1,18 +1,25 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<ContentHunter.Web.Models.Instruction>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
-    Index
+    Instructions
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="JavascriptContent" runat="server">
+    <script src="<%: Url.Content("~/Scripts/execution.js") %>" type="text/javascript"></script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 
-<h2>Index</h2>
+<h2>Instructions</h2>
 
 <p>
     <%: Html.ActionLink("Create Instruction", "Create") %>
 </p>
 <table>
     <tr>
+        <th>
+            Status
+        </th>
         <th>
             Url
         </th>
@@ -42,6 +49,10 @@
 
 <% foreach (var item in Model) { %>
     <tr>
+        <td align="center">
+            <a href="javascript:;" id="status<%= item.Id %>" class="status <%= item.State? "on" : "off" %>" title="<%= item.State? "Running" : "Click to start" %>"></a>
+        </td>
+
         <td>
             <a href="<%= item.Url %>"><%= item.Url %></a>
         </td>
@@ -69,7 +80,7 @@
         <td>
             <%: Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |
             <%: Html.ActionLink("Delete", "Delete", new { id=item.Id }) %>
-        </td>
+        </td>        
     </tr>
 <% } %>
 
