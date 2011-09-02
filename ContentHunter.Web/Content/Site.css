@@ -331,6 +331,7 @@ div#title {
 
 .on {background-image: url(images/icon_led_green_12.gif);}
 .off {background-image: url(images/icon_led_red_12.gif);}
+.notRecurrent {background-image: url(images/icon_yellow_circle_v1.png);}
 .status 
 {
     display:block;

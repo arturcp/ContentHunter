@@ -51,7 +51,7 @@
             <%: Html.ValidationMessageFor(model => model.Engine) %>
         </div>
 
-        <div class="editor-label">
+        <%--<div class="editor-label">
             <%: Html.LabelFor(model => model.StartedAt) %>
         </div>
         <div class="editor-field">
@@ -65,7 +65,7 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.FinishedAt) %>
             <%: Html.ValidationMessageFor(model => model.FinishedAt) %>
-        </div>
+        </div>--%>
 
         <div class="editor-label">
             Is Recursive?

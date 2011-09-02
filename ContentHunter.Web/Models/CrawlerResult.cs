@@ -8,14 +8,13 @@ namespace ContentHunter.Web.Models
     {
         public CrawlerResult()
         {
-            ErrorCode = (short)Enum.ErrorCodes.NoErrors;
+            //ErrorCode = (short)Enum.ErrorCodes.NoErrors;
             Title = string.Empty;
             Content = string.Empty;
-            Message = string.Empty;
-            ErrorMessage = string.Empty;
+            //Message = string.Empty;
+            //ErrorMessage = string.Empty;
         }
 
-        //[DatabaseGenerated(System.ComponentModel.DataAnnotations.DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         
         [Required, StringLength(300)]
@@ -24,13 +23,13 @@ namespace ContentHunter.Web.Models
         [Required]
         public string Content { get; set; }
         
-        [StringLength(45)]
+        /*[StringLength(45)]
         public string Message { get; set; }
         
         public short ErrorCode { get; set; }
 
         [StringLength(100)]
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; }*/
 
         [Required, StringLength(200)]
         public string Url { get; set; }

@@ -1,28 +1,53 @@
 ﻿$(document).ready(function () {
-    //if ($('#message').length > 0)
-    //     setInterval("check()", 10000);
+    setInterval("Instruction.check()", 30000);
 
-    $('.status').click(function () {
+    $('.off').click(function () {
         var id = $(this).attr('id').replace('status', '');
         var instruction = $(this);
         $.post('/Execution/Start', { id: id }, function (data) {
-            instruction.removeClass('off');
+            Instruction.clearClass(instruction);
             instruction.addClass('on');
             instruction.attr('title', 'Running');
         });
     });
 });
 
-function check() {
-    $.getJSON('/Show', function (data) {
-        var items = [];
+Instruction = {
+    clearClass: function (instruction) {
+        instruction.removeClass('off');
+        instruction.removeClass('on');
+        instruction.removeClass('notRecurrent');
+    },
 
-        $.each(data, function (key, val) {
-            alert(val);
+    check: function () {
+        $.getJSON('Execution/Status', function (data) {
+            var items = [];
+            var instruction;
+            $.each(data, function (key, val) {
+                instruction = $('#status' + val["Id"]);
+                Instruction.clearClass(instruction);
+                instruction.addClass(Instruction.getClass(val));
+                instruction.attr('title', Instruction.getTitle(val));
+
+            });
         });
+    },
 
-        if (val) {
-            $('#message').html('Execution finished!');
-        }
-    });
+    getClass: function (instruction) {
+        var resultClass = "";
+        if (instruction["Running"]) resultClass = "on";
+        else if (!instruction["IsRecurrent"] && instruction["HasRun"]) resultClass = "notRecurrent";
+        else resultClass = "off";
+
+        return resultClass;
+
+    },
+
+    getTitle: function (instruction) {
+        var resultTitle = "";
+        if (instruction["Running"]) resultTitle = "Running";
+        else if (!instruction["IsRecurrent"] && instruction["HasRun"]) resultTitle = "This instruction is not recurrent and has already run";
+        else resultTitle = "Click to start";
+        return resultTitle;
+    }
 }

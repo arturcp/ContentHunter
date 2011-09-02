@@ -20,10 +20,8 @@ namespace ContentHunter.Web.Controllers
         public JsonResult Status()
         {
             var list = (from i in db.Instructions
-                       where i.State
-                       select i.Id).ToList<int>();
+                       select new { Id = i.Id, Running = i.State, IsRecurrent = i.IsRecurrent, HasRun = i.FinishedAt.HasValue });
 
-            //bool isFinished = list.Count == 0;
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -32,12 +30,16 @@ namespace ContentHunter.Web.Controllers
         {
             if (id <= 0)
             {
-                List<Instruction> instructions = db.Instructions.ToList<Instruction>();
-
+                List<Instruction> instructions = (from i in db.Instructions.ToList<Instruction>()
+                                                  where !i.State && (i.IsRecurrent || !i.StartedAt.HasValue)
+                                                  select i).ToList<Instruction>();
+                
                 foreach (Instruction input in instructions)
                 {
                     new Thread(Execute).Start(input);
                 }
+                
+                return new RedirectResult("/");
             }
             else
             {
@@ -45,11 +47,9 @@ namespace ContentHunter.Web.Controllers
 
                 if (instruction != null)
                     new Thread(Execute).Start(instruction);
-            }
 
-            //ViewBag.Message = "Instructions are executing";
-            //return new RedirectResult("/Instruction");
-            return new EmptyResult();
+                return new EmptyResult();
+            }            
         }
                 
 

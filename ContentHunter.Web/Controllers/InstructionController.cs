@@ -22,6 +22,11 @@ namespace ContentHunter.Web.Controllers
             return View(db.Instructions.ToList());
         }
 
+        public ActionResult Details(int id)
+        {
+            return View(db.Instructions.Find(id));
+        }
+
         //
         // GET: /Instruction/Create
 

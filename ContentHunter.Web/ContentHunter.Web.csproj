@@ -137,6 +137,7 @@
     <Content Include="Views\Execution\Index.aspx" />
     <Content Include="Views\Instruction\Create.aspx" />
     <Content Include="Views\Instruction\Delete.aspx" />
+    <Content Include="Views\Instruction\Details.aspx" />
     <Content Include="Views\Instruction\Edit.aspx" />
     <Content Include="Views\Instruction\Index.aspx" />
     <Content Include="Web.config" />

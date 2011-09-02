@@ -81,8 +81,6 @@ namespace ContentHunter.Web.Models.Engines
 
             if (instruction != null)
             {
-                //try
-                //{
                 if (instruction.IsOriginal)
                 {
                     instruction.StartedAt = DateTime.Now;
@@ -91,8 +89,14 @@ namespace ContentHunter.Web.Models.Engines
                     db.SaveChanges();
                 }
 
-
-                context = ExecuteByType(instruction);
+                try
+                {
+                    context = ExecuteByType(instruction);
+                }
+                catch
+                {
+                    //Log events
+                }
 
                 List<CrawlerResult> toSave = new List<CrawlerResult>();
                 foreach (var result in context.Results)
@@ -128,14 +132,7 @@ namespace ContentHunter.Web.Models.Engines
                     db.Entry(instruction).State = EntityState.Modified;
                     db.SaveChanges();
                 }
-                // }
-                // catch (Exception error)
-                // {
-                //outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.GeneralError;
-                //outputs.ErrorMessage = error.Message;
-                //  }
             }
-            //else outputs.ErrorCode = (short)ContentHunter.Web.Models.Util.Enum.ErrorCodes.NullInput;
 
             return context;
         }

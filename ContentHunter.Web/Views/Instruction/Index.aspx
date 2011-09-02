@@ -13,8 +13,15 @@
 <h2>Instructions</h2>
 
 <p>
-    <%: Html.ActionLink("Create Instruction", "Create") %>
+    <%: Html.ActionLink("Create Instruction", "Create") %> | <a href="javascript:;" onclick="$('#form1').submit();">Start All</a>
 </p>
+
+
+<% using (Html.BeginForm("Start", "Execution", new { Id = 0}, FormMethod.Post, new { Id = "form1" }))
+   { %>
+<% } %>
+
+
 <table>
     <tr>
         <th>
@@ -29,12 +36,12 @@
         <th>
             Engine
         </th>
-        <th>
+        <%--<th>
             Started at
         </th>
         <th>
             Finished at
-        </th>
+        </th>--%>
         <th>
             Recursive?
         </th>
@@ -50,7 +57,16 @@
 <% foreach (var item in Model) { %>
     <tr>
         <td align="center">
-            <a href="javascript:;" id="status<%= item.Id %>" class="status <%= item.State? "on" : "off" %>" title="<%= item.State? "Running" : "Click to start" %>"></a>
+            <% if (item.State)
+               { %>
+                <a href="javascript:;" id="status<%= item.Id %>" class="status on" title="Running"></a>
+            <% }
+               else if (!item.IsRecurrent && item.FinishedAt.HasValue)
+               { %>
+                <a href="javascript:;" id="status<%= item.Id %>" class="status notRecurrent" title="This instruction is not recurrent and has already run"></a>
+            <% } else {%>
+                <a href="javascript:;" id="status<%= item.Id %>" class="status off" title="Click to start"></a>   
+            <% } %>
         </td>
 
         <td>
@@ -62,12 +78,12 @@
         <td>
             <%: Html.DisplayFor(modelItem => item.Engine) %>
         </td>
-        <td>
+        <%--<td>
             <%: Html.DisplayFor(modelItem => item.StartedAt) %>
         </td>
         <td>
             <%: Html.DisplayFor(modelItem => item.FinishedAt) %>
-        </td>
+        </td>--%>
         <td>
             <%: item.IsRecursive? "Yes": "No" %>
         </td>
@@ -79,7 +95,8 @@
         </td>
         <td>
             <%: Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |
-            <%: Html.ActionLink("Delete", "Delete", new { id=item.Id }) %>
+            <%: Html.ActionLink("Delete", "Delete", new { id=item.Id }) %> |
+            <%: Html.ActionLink("Log", "Details", new { id=item.Id }) %>
         </td>        
     </tr>
 <% } %>

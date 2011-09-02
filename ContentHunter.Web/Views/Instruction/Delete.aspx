@@ -29,7 +29,7 @@
         <%: Html.DisplayFor(model => model.Engine) %>
     </div>
 
-    <div class="display-label">StartedAt</div>
+   <%-- <div class="display-label">StartedAt</div>
     <div class="display-field">
         <%: Html.DisplayFor(model => model.StartedAt) %>
     </div>
@@ -37,7 +37,7 @@
     <div class="display-label">FinishedAt</div>
     <div class="display-field">
         <%: Html.DisplayFor(model => model.FinishedAt) %>
-    </div>
+    </div>--%>
 
     <div class="display-label">IsRecursive</div>
     <div class="display-field">

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using ContentHunter.Web.Models;
+using System.Data;
 
 namespace ContentHunter.Web
 {
@@ -24,7 +26,7 @@ namespace ContentHunter.Web
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+                new { controller = "Instruction", action = "Index", id = UrlParameter.Optional } // Parameter defaults
             );
 
         }
@@ -35,6 +37,26 @@ namespace ContentHunter.Web
 
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
+
+            StopRunningInstructions();
+        }
+
+        private void StopRunningInstructions()
+        {
+            ContentHunterDB db = new ContentHunterDB();
+
+            var list = (from i in db.Instructions
+                        where i.State
+                        select i).ToList<Instruction>();
+
+            foreach (Instruction instruction in list)
+            {
+                instruction.FinishedAt = DateTime.Now;
+                instruction.State = false;
+                db.Entry(instruction).State = EntityState.Modified;
+            }
+            if (list.Count > 0)
+                db.SaveChanges();
         }
     }
 }

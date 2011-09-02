@@ -19,7 +19,7 @@
             </div> 
             <div id="menucontainer">
                 <ul id="menu">
-                    <li><%: Html.ActionLink("Home", "Index", "Home")%></li>
+                    <%--<li><%: Html.ActionLink("Home", "Index", "Home")%></li>--%>
                     <li><%: Html.ActionLink("Instructions", "Index", "Instruction")%></li>
                     <%--<li><%: Html.ActionLink("Execute", "Index", "Execution")%></li>--%>
                 </ul>
