@@ -71,6 +71,5 @@ namespace ContentHunter.Web.Models.Engines
             System.Threading.Thread.Sleep(61000);
             return new ContextResult();
         }
-
     }
 }

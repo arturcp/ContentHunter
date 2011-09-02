@@ -16,6 +16,12 @@
     <%: Html.ActionLink("Create Instruction", "Create") %> | <a href="javascript:;" onclick="$('#form1').submit();">Start All</a>
 </p>
 
+<p class="pSubtitle">
+    <span class="subtitleOn subtitle" title="Running instructions">Running</span> 
+    <span class="subtitleNotRecurrent subtitle" title="These instructions are not recurrent and have run already. They will not execute anymore unless you change its configuration">Expected once and executed</span>
+    <span class="subtitleOff subtitle" title="Stopped instructions">Stopped</span>
+</p>
+
 
 <% using (Html.BeginForm("Start", "Execution", new { Id = 0}, FormMethod.Post, new { Id = "form1" }))
    { %>

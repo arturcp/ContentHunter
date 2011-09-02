@@ -332,6 +332,11 @@ div#title {
 .on {background-image: url(images/icon_led_green_12.gif);}
 .off {background-image: url(images/icon_led_red_12.gif);}
 .notRecurrent {background-image: url(images/icon_yellow_circle_v1.png);}
+.subtitleOn {background: transparent url(images/icon_led_green_12.gif) no-repeat scroll 0 3px}
+.subtitleOff {background: transparent url(images/icon_led_red_12.gif) no-repeat scroll 0 3px}
+.subtitleNotRecurrent {background: transparent url(images/icon_yellow_circle_v1.png) no-repeat scroll 0 3px}
+.subtitle {display:block; height:15px; text-indent: 15px; text-decoration: none; float: left; margin-right: 5px; cursor: pointer}
+.pSubtitle {float: left; width: 100%}
 .status 
 {
     display:block;
