@@ -88,6 +88,7 @@
     <Compile Include="Models\Instruction.cs" />
     <Compile Include="Models\Engines\LeitoraCompulsiva.cs" />
     <Compile Include="Models\CrawlerResult.cs" />
+    <Compile Include="Models\Util\Sanitize.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

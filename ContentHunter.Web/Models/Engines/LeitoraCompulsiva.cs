@@ -43,6 +43,7 @@ namespace ContentHunter.Web.Models.Engines
 
                     output.Title = System.Web.HttpUtility.HtmlDecode(title.InnerText);
                     output.Content = content.InnerHtml;
+                    //var aux = Sanitize.Strip(output.Content);
 
                     if (tags != null)
                     {
