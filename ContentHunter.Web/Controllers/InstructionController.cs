@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using ContentHunter.Web.Models;
 using ContentHunter.Web.Models.Engines;
+using WebToolkit.Converter;
 
 namespace ContentHunter.Web.Controllers
 { 
@@ -44,6 +45,9 @@ namespace ContentHunter.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!SafeConvert.ToBool(Request["schedule"]))
+                    instruction.Unschedule();
+
                 db.Instructions.Add(instruction);
                 db.SaveChanges();
                 return RedirectToAction("Index");  
@@ -70,6 +74,9 @@ namespace ContentHunter.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!SafeConvert.ToBool(Request["schedule"]))
+                    instruction.Unschedule();
+
                 db.Entry(instruction).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

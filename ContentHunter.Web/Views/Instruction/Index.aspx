@@ -57,6 +57,12 @@
         <th>
             Categories
         </th>
+        <th>
+            Execution Plan
+        </th>
+        <th>
+            Schedule
+        </th>
         <th></th>
     </tr>
 
@@ -100,9 +106,15 @@
             <%: Html.DisplayFor(modelItem => item.Categories) %>
         </td>
         <td>
-            <%: Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |
-            <%: Html.ActionLink("Delete", "Delete", new { id=item.Id }) %> |
-            <%: Html.ActionLink("Log", "Details", new { id=item.Id }) %>
+            <%: item.GetExecutionPlan() %>
+        </td>
+        <td>
+            <%: Html.DisplayFor(modelItem => item.ScheduledTo) %>
+        </td>
+        <td>
+            <%: Html.ActionLink("Edit", "Edit", new { id = item.Id }, new  { @class= "edit", title="edit" })%> 
+            <%: Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "delete", title = "delete" })%> 
+            <%: Html.ActionLink("Log", "Details", new { id = item.Id }, new { @class = "log", title = "log" })%>
         </td>        
     </tr>
 <% } %>

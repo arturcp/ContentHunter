@@ -95,7 +95,27 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Categories)%>
             <%: Html.ValidationMessageFor(model => model.Categories)%>
-        </div>     
+        </div> 
+        
+        <div class="editor-label">
+            <input type="checkbox" id="schedule" name="schedule" value="true"/> Advanced Settings
+        </div> 
+        <div class="editor-field" id="scheduleSettings">
+            Run this instruction each <%: Html.TextBoxFor(model => model.FrequencyValue, new {@class = "frenquencyValue", maxlength = 5 }) %> 
+            <select name="frequencyUnit">
+                <option value="0">Never</option>
+                <option value="1" <%: Model.FrequencyUnit == 1? "selected='selected'" : "" %>>Hour(s)</option>
+                <option value="2" <%: Model.FrequencyUnit == 2? "selected='selected'" : "" %>>Day(s)</option>
+                <option value="3" <%: Model.FrequencyUnit == 3? "selected='selected'" : "" %>>Month(s)</option>
+            </select><br />             
+            Starting executions on <%: Html.TextBoxFor(model => model.ScheduledTo, new { @class = "scheduledTo", maxlength = 10 })%> 
+        </div>            
+        <% if (Model.FrequencyUnit > 0 && Model.FrequencyValue > 0) {%>
+            <script type="text/javascript">
+                $('#schedule').attr('checked', 'checked');
+                $('#scheduleSettings').show();
+            </script>
+        <% } %>
 
         <p>
             <input type="submit" value="Save" />
@@ -108,3 +128,9 @@
 </div>
 
 </asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="JavascriptContent" runat="server">
+    <script src="<%: Url.Content("~/Scripts/instruction.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/jquery-ui-1.8.11.min.js") %>" type="text/javascript"></script>    
+</asp:Content>
+

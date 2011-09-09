@@ -92,7 +92,21 @@
         <div class="editor-field">
             <%: Html.EditorFor(model => model.Categories) %>
             <%: Html.ValidationMessageFor(model => model.Categories) %>
-        </div>   
+        </div>  
+        
+        <div class="editor-label">
+            <input type="checkbox" id="schedule" name="schedule" value="true" /> Advanced Settings
+        </div> 
+        <div class="editor-field" id="scheduleSettings">
+            Run this instruction each <%: Html.TextBoxFor(model => model.FrequencyValue, new {@class = "frenquencyValue", maxlength = 5 }) %> 
+            <select name="frequencyUnit">
+                <option value="0">Never</option>
+                <option value="1">Hour(s)</option>
+                <option value="2">Day(s)</option>
+                <option value="3">Month(s)</option>
+            </select><br />
+            Starting executions on <%: Html.TextBoxFor(model => model.ScheduledTo, new { @class = "scheduledTo", maxlength = 10 })%> 
+        </div>
 
         <p>
             <input type="submit" value="Create" />
@@ -104,4 +118,9 @@
     <%: Html.ActionLink("Back to List", "Index") %>
 </div>
 
+</asp:Content>
+
+
+<asp:Content ID="Content3" ContentPlaceHolderID="JavascriptContent" runat="server">
+    <script src="<%: Url.Content("~/Scripts/instruction.js") %>" type="text/javascript"></script>
 </asp:Content>

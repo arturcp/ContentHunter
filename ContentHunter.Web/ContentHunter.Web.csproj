@@ -92,9 +92,24 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\delete.gif" />
+    <Content Include="Content\images\edit.png" />
     <Content Include="Content\images\icon_led_green_12.gif" />
     <Content Include="Content\images\icon_led_red_12.gif" />
     <Content Include="Content\images\icon_yellow_circle_v1.png" />
+    <Content Include="Content\images\Log.png" />
+    <Content Include="Content\images\ui-bg_diagonals-thick_75_f3d8d8_40x40.png" />
+    <Content Include="Content\images\ui-bg_dots-small_65_a6a6a6_2x2.png" />
+    <Content Include="Content\images\ui-bg_flat_0_333333_40x100.png" />
+    <Content Include="Content\images\ui-bg_flat_65_ffffff_40x100.png" />
+    <Content Include="Content\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\images\ui-bg_glass_55_fbf8ee_1x400.png" />
+    <Content Include="Content\images\ui-bg_highlight-hard_100_eeeeee_1x100.png" />
+    <Content Include="Content\images\ui-bg_highlight-hard_100_f6f6f6_1x100.png" />
+    <Content Include="Content\images\ui-bg_highlight-soft_15_cc0000_1x100.png" />
+    <Content Include="Content\images\ui-icons_004276_256x240.png" />
+    <Content Include="Content\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -123,6 +138,7 @@
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\instruction.js" />
     <Content Include="Scripts\execution.js" />
     <Content Include="Scripts\jquery-1.5.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.5.1.js" />

@@ -51,6 +51,13 @@ namespace ContentHunter.Web.Models
 
         public bool State { get; set; }
 
+        public int FrequencyValue { get; set; }
+
+        //hour, day, month and year
+        public int FrequencyUnit { get; set; }
+
+        public DateTime? ScheduledTo { get; set; }
+
         //used to recursive crawler, do not persist on database
         [NotMapped]
         public bool IsOriginal { get; set; }
@@ -65,6 +72,29 @@ namespace ContentHunter.Web.Models
         public ContextResult Execute()
         {
             return GetEngine().Execute();
+        }
+
+        public void Unschedule()
+        {
+            FrequencyUnit = 0;
+            FrequencyValue = 0;
+            ScheduledTo = null;
+        }
+
+        public string GetExecutionPlan()
+        {
+            string result = "Not set";
+            if (FrequencyValue > 0 && FrequencyUnit > 0)
+                result = string.Format("Each {0} {1}{2}", FrequencyValue, Enum.GetName(typeof(FrequencyUnits), FrequencyUnit).ToLower(), FrequencyUnit > 0 ? "" : "s");
+            return result;
+        }
+
+        public enum FrequencyUnits
+        {
+            Never = 0,
+            Hour = 1,
+            Day = 2,
+            Month = 3
         }
 
 
