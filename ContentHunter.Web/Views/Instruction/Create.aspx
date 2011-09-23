@@ -101,11 +101,12 @@
             Run this instruction each <%: Html.TextBoxFor(model => model.FrequencyValue, new {@class = "frenquencyValue", maxlength = 5 }) %> 
             <select name="frequencyUnit">
                 <option value="0">Never</option>
-                <option value="1">Hour(s)</option>
-                <option value="2">Day(s)</option>
-                <option value="3">Month(s)</option>
+                <option value="1">Minute(s)</option>
+                <option value="2">Hour(s)</option>
+                <option value="3">Day(s)</option>
+                <option value="4">Month(s)</option>
             </select><br />
-            Starting executions on <%: Html.TextBoxFor(model => model.ScheduledTo, new { @class = "scheduledTo", maxlength = 10 })%> 
+            Starting executions on <%: Html.TextBoxFor(model => model.ScheduledTo, new { @class = "scheduledTo", maxlength = 16 })%> (dd/mm/aaaa hh:mm)
         </div>
 
         <p>

@@ -6,6 +6,9 @@ using System.Reflection;
 using ContentHunter.Web.Models.Engines;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using WebToolkit.Converter;
+using GameTools;
+using System.Threading;
 
 namespace ContentHunter.Web.Models
 {
@@ -69,17 +72,22 @@ namespace ContentHunter.Web.Models
             return crawler;
         }
 
-        public ContextResult Execute()
+        /*public ContextResult Execute()
         {
             return GetEngine().Execute();
+        }*/
+
+        public void Execute()
+        {
+            GetEngine().Execute();
         }
 
-        public void Unschedule()
+        /*public void Unschedule()
         {
             FrequencyUnit = 0;
             FrequencyValue = 0;
             ScheduledTo = null;
-        }
+        }*/
 
         public string GetExecutionPlan()
         {
@@ -92,9 +100,43 @@ namespace ContentHunter.Web.Models
         public enum FrequencyUnits
         {
             Never = 0,
-            Hour = 1,
-            Day = 2,
-            Month = 3
+            Minute = 1,
+            Hour = 2,
+            Day = 3,
+            Month = 4            
+        }
+
+        public int GetRoundSpan()
+        {
+            if (FrequencyUnit == (int)FrequencyUnits.Minute)
+                return SafeConvert.ToInt(FrequencyValue);
+            else if (FrequencyUnit == (int)FrequencyUnits.Hour)
+                return SafeConvert.ToInt(60 * FrequencyValue);
+            else if (FrequencyUnit == (int)FrequencyUnits.Day)
+                return SafeConvert.ToInt(1440 * FrequencyValue);
+            else if (FrequencyUnit == (int)FrequencyUnits.Month)
+                return SafeConvert.ToInt(43200 * FrequencyValue);
+            else return 0;
+        }
+
+        public void Schedule()
+        {
+            RoundControl round = new RoundControl(Id.ToString(), GetRoundSpan());
+            round.OnRoundExecution += new RoundControl.RoundExecutionDelegate(Execute);
+            new Thread(ExecuteAsync).Start(new ThreadParameter() { Date = ScheduledTo.Value, Round = round });
+        }
+
+        public void Unschedule()
+        {
+            new RoundControl(Id.ToString(), 0).StopRoundControl();
+        }
+
+        private void ExecuteAsync(object obj)
+        {
+            ThreadParameter data = (ThreadParameter)obj;
+            RoundControl round = data.Round;
+            DateTime date = data.Date;
+            round.ScheduleStart(date);
         }
 
 

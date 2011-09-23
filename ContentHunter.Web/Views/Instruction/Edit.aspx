@@ -104,11 +104,12 @@
             Run this instruction each <%: Html.TextBoxFor(model => model.FrequencyValue, new {@class = "frenquencyValue", maxlength = 5 }) %> 
             <select name="frequencyUnit">
                 <option value="0">Never</option>
-                <option value="1" <%: Model.FrequencyUnit == 1? "selected='selected'" : "" %>>Hour(s)</option>
-                <option value="2" <%: Model.FrequencyUnit == 2? "selected='selected'" : "" %>>Day(s)</option>
-                <option value="3" <%: Model.FrequencyUnit == 3? "selected='selected'" : "" %>>Month(s)</option>
-            </select><br />             
-            Starting executions on <%: Html.TextBoxFor(model => model.ScheduledTo, new { @class = "scheduledTo", maxlength = 10 })%> 
+                <option value="1" <%: Model.FrequencyUnit == 1? "selected='selected'" : "" %>>Minute(s)</option>
+                <option value="2" <%: Model.FrequencyUnit == 2? "selected='selected'" : "" %>>Hour(s)</option>
+                <option value="3" <%: Model.FrequencyUnit == 3? "selected='selected'" : "" %>>Day(s)</option>
+                <option value="4" <%: Model.FrequencyUnit == 4? "selected='selected'" : "" %>>Month(s)</option>
+            </select><br />         
+            Starting executions on <input id="ScheduledTo" class="scheduledTo" type="text" value="<%= Model.ScheduledTo.HasValue? Model.ScheduledTo.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty %>" name="ScheduledTo" maxlength="16" /> (dd/mm/aaaa hh:mm)
         </div>            
         <% if (Model.FrequencyUnit > 0 && Model.FrequencyValue > 0) {%>
             <script type="text/javascript">

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using ContentHunter.Web.Models;
 using System.Data;
+using GameTools;
 
 namespace ContentHunter.Web
 {
@@ -14,6 +15,8 @@ namespace ContentHunter.Web
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        ContentHunterDB db = new ContentHunterDB();
+
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
@@ -39,6 +42,7 @@ namespace ContentHunter.Web
             RegisterRoutes(RouteTable.Routes);
 
             StopRunningInstructions();
+            ScheduleInstructions();
         }
 
         private void StopRunningInstructions()
@@ -51,12 +55,25 @@ namespace ContentHunter.Web
 
             foreach (Instruction instruction in list)
             {
+                //TODO log error!
                 instruction.FinishedAt = DateTime.Now;
                 instruction.State = false;
                 db.Entry(instruction).State = EntityState.Modified;
             }
             if (list.Count > 0)
                 db.SaveChanges();
+        }
+
+        private void ScheduleInstructions()
+        {
+            List<Instruction> instructions = (from i in db.Instructions
+                                              where !i.State && (i.IsRecurrent || !i.StartedAt.HasValue) && i.ScheduledTo.HasValue
+                                              select i).ToList<Instruction>();
+
+            foreach (Instruction instruction in instructions)
+            {
+                instruction.Schedule();
+            }            
         }
     }
 }

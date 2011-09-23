@@ -8,6 +8,9 @@ using System.Web.Mvc;
 using ContentHunter.Web.Models;
 using ContentHunter.Web.Models.Engines;
 using WebToolkit.Converter;
+using GameTools;
+using System.Threading;
+using System.Collections;
 
 namespace ContentHunter.Web.Controllers
 { 
@@ -45,9 +48,7 @@ namespace ContentHunter.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!SafeConvert.ToBool(Request["schedule"]))
-                    instruction.Unschedule();
-
+                ManageSchedule(instruction);
                 db.Instructions.Add(instruction);
                 db.SaveChanges();
                 return RedirectToAction("Index");  
@@ -74,9 +75,7 @@ namespace ContentHunter.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (!SafeConvert.ToBool(Request["schedule"]))
-                    instruction.Unschedule();
-
+                ManageSchedule(instruction);
                 db.Entry(instruction).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -98,10 +97,12 @@ namespace ContentHunter.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
-        {            
+        {   
             Instruction instruction = db.Instructions.Find(id);
+            instruction.Unschedule();
             db.Instructions.Remove(instruction);
             db.SaveChanges();
+            
             return RedirectToAction("Index");
         }
 
@@ -109,6 +110,19 @@ namespace ContentHunter.Web.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        private void ManageSchedule(Instruction instruction)
+        {
+            if (SafeConvert.ToBool(Request["schedule"]))
+                instruction.Schedule();
+            else
+            {
+                instruction.FrequencyUnit = 0;
+                instruction.FrequencyValue = 0;
+                instruction.ScheduledTo = null;
+                instruction.Unschedule();
+            }
         }
     }
 }

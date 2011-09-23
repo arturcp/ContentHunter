@@ -79,6 +79,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ThreadParameter.cs" />
     <Compile Include="Models\ContextResult.cs" />
     <Compile Include="Models\Context\ContentHunterDB.cs" />
     <Compile Include="Models\Base\Engine.cs" />
@@ -185,6 +186,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\GameTools\GameTools.csproj">
+      <Project>{313B8B68-29A6-46D3-A5A6-C2949377808D}</Project>
+      <Name>GameTools</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WebToolkit\WebToolkit\WebToolkit.csproj">
       <Project>{D503C53E-93A8-401B-826E-5A26C3EC7908}</Project>
       <Name>WebToolkit</Name>

@@ -3,7 +3,7 @@
         $('#scheduleSettings').toggle('slow');
     });
 
-    $(".scheduledTo").datepicker({
+    /*$(".scheduledTo").datepicker({
         dateFormat: 'dd/mm/yy',
         dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'],
         dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
@@ -12,5 +12,5 @@
         monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
         nextText: 'Próximo',
         prevText: 'Anterior'
-    });
+    });*/
 });

@@ -69,7 +69,7 @@ namespace ContentHunter.Web.Models.Engines
 
         public override ContextResult ParseXml(Instruction instruction)
         {
-            System.Threading.Thread.Sleep(61000);
+            System.Threading.Thread.Sleep(35000);
             return new ContextResult();
         }
     }

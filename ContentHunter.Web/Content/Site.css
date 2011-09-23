@@ -342,7 +342,7 @@ div#title {
 /* Create */
 
 .frenquencyValue {width: 50px !important}
-.scheduledTo {width: 100px !important;}
+.scheduledTo {width: 130px !important;}
 #scheduleSettings {display: none}
 
 .delete {display:block; height:16px; width: 16px;background-image: url(images/delete.gif); background-repeat: no-repeat; text-indent:-9999px; float: left; margin-right: 6px}
