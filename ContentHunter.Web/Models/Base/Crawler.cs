@@ -182,7 +182,23 @@ namespace ContentHunter.Web.Models.Engines
 
         public static List<Engine> GetEngines()
         {
-            string path = System.Web.HttpContext.Current.Server.MapPath("~/Models/Engines");
+            string @namespace = "ContentHunter.Web.Models.Engines";
+            List<Engine> list = new List<Engine>();
+            var engines = from t in Assembly.GetExecutingAssembly().GetTypes()
+                    where t.IsClass && t.Namespace == @namespace && t.BaseType.Name == "Crawler"
+                     select t;
+
+            foreach (System.Type file in engines.ToList())
+            {
+                Crawler crawler = (Crawler)file.Assembly.CreateInstance(file.FullName);
+                list.Add(new Engine() { ClassName = Path.GetFileNameWithoutExtension(file.Name), FriendlyName = crawler.GetFriendlyName() });
+            }
+
+            return list;
+            
+            //.ForEach(t => list.Add(new Engine())); 
+
+            /*string path = System.Web.HttpContext.Current.Server.MapPath("~/Models/Engines");
             string[] files = Directory.GetFiles(path);
             List<Engine> list = new List<Engine>();
 
@@ -192,7 +208,7 @@ namespace ContentHunter.Web.Models.Engines
                 list.Add(new Engine() { ClassName = Path.GetFileNameWithoutExtension(file), FriendlyName = crawler.GetFriendlyName() });
             }
 
-            return list;
+            return list;*/
         }
     }
 }
