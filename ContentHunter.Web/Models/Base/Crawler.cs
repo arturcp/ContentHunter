@@ -186,6 +186,7 @@ namespace ContentHunter.Web.Models.Engines
             List<Engine> list = new List<Engine>();
             var engines = from t in Assembly.GetExecutingAssembly().GetTypes()
                     where t.IsClass && t.Namespace == @namespace && t.BaseType.Name == "Crawler"
+                    orderby t.Name ascending
                      select t;
 
             foreach (System.Type file in engines.ToList())

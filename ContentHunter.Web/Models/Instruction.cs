@@ -54,7 +54,7 @@ namespace ContentHunter.Web.Models
 
         public bool State { get; set; }
 
-        public int FrequencyValue { get; set; }
+        public int? FrequencyValue { get; set; }
 
         //hour, day, month and year
         public int FrequencyUnit { get; set; }

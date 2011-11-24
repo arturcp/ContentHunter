@@ -44,7 +44,8 @@
         <div class="editor-field">
             <select name="Engine">
             <% foreach (ContentHunter.Web.Models.Engine engine in ViewBag.Engines){ %>
-		        <option value="<%= engine.ClassName %>"><%= engine.FriendlyName %></option>
+		        <option value="<%= engine.ClassName %>" <%= ViewData.Model.Engine == engine.ClassName ? "selected='selected'" : ""%>><%= engine.FriendlyName %></option>
+                
 	        <% }  %>
             </select>
             

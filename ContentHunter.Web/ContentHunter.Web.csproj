@@ -79,6 +79,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Engines\Skoob.cs" />
     <Compile Include="Models\ThreadParameter.cs" />
     <Compile Include="Models\ContextResult.cs" />
     <Compile Include="Models\Context\ContentHunterDB.cs" />
