@@ -27,12 +27,27 @@ namespace ContentHunter.Web.Models.Engines
                 AddCandidateLink(context, string.Format("{0}{1}", "http://www.skoob.com.br", link.Attributes["href"].Value));
             }
 
-            foreach (HtmlNode post in books)
+            foreach (HtmlNode book in books)
             {
                 output = new CrawlerResult();
-                HtmlNode title = post.SelectSingleNode(".//h3[@class='storytitle']");
-                HtmlNode content = post.SelectSingleNode(".//div[@class='storycontent']");
-                HtmlNodeCollection tags = post.SelectNodes(".//div[@class='meta']//a");
+                string href = book.Attributes["href"].Value;
+
+                doc.LoadHtml(GetContent(string.Format("http://www.skoob.com.br{0}",href)));
+
+                HtmlNode img = book.SelectSingleNode("//div[@id='livro_capa']//img");
+                string bookCover = string.Empty;
+                if (img != null && img.Attributes["src"].Value != "/img/geral/semcapa_m.gif")
+                    bookCover = img.Attributes["src"].Value;
+
+                HtmlNode title = book.SelectSingleNode("//div[@id='barra_titulo']//h1");
+                string bookTitle = string.Empty;
+                if (title != null)
+                    bookTitle = title.InnerText;
+                
+
+                //HtmlNode title = book.SelectSingleNode(".//h3[@class='storytitle']");
+                HtmlNode content = book.SelectSingleNode(".//div[@class='storycontent']");
+                HtmlNodeCollection tags = book.SelectNodes(".//div[@class='meta']//a");
 
                 if (title != null && content != null)
                 {
