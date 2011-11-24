@@ -65,7 +65,7 @@ namespace ContentHunter.Web.Models
         [NotMapped]
         public bool IsOriginal { get; set; }
 
-        private Crawler GetEngine()
+        public Crawler GetEngine()
         {
             Crawler crawler = (Crawler)Assembly.GetExecutingAssembly().CreateInstance(string.Format("ContentHunter.Web.Models.Engines.{0}", Engine));
             crawler.Input = this;

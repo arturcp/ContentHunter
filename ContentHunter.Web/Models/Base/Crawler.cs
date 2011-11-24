@@ -9,6 +9,7 @@ using System.Linq;
 using WebToolkit.Index;
 using Lucene.Net.Documents;
 using System.Data;
+using System.Text;
 
 namespace ContentHunter.Web.Models.Engines
 {
@@ -18,6 +19,11 @@ namespace ContentHunter.Web.Models.Engines
         public Instruction Input { get; set; }
 
         protected List<string> VisitedLinks { get; set; }
+
+        protected virtual bool IsCustomSaved
+        {
+            get { return false; }
+        }
 
         public void AddCandidateLink(ContextResult contextResult, string link)
         {
@@ -47,7 +53,7 @@ namespace ContentHunter.Web.Models.Engines
                 {
                     try
                     {
-                        content = new StreamReader(crawler.OpenRead(url)).ReadToEnd();
+                        content = new StreamReader(crawler.OpenRead(url), Encoding.Default).ReadToEnd();
                     }
                     catch (WebException error)
                     {
@@ -81,13 +87,7 @@ namespace ContentHunter.Web.Models.Engines
 
             if (instruction != null)
             {
-                if (instruction.IsOriginal)
-                {
-                    instruction.StartedAt = DateTime.Now;
-                    instruction.State = true;
-                    db.Entry(instruction).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
+                InitializeInstructionExecution(instruction);
 
                 try
                 {
@@ -95,9 +95,36 @@ namespace ContentHunter.Web.Models.Engines
                 }
                 catch
                 {
+                    int i = 0;
                     //Log events
                 }
 
+                SaveAndIndexResults(context, instruction);
+                FinalizeInstructionExecution(instruction);
+            }
+
+            return context;
+        }
+
+        private void InitializeInstructionExecution(Instruction instruction)
+        {
+            if (instruction.IsOriginal)
+            {
+                instruction.StartedAt = DateTime.Now;
+                instruction.State = true;
+                db.Entry(instruction).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
+        private void SaveAndIndexResults(ContextResult context, Instruction instruction)
+        {
+            Crawler crawler = instruction.GetEngine();
+
+            if (crawler.IsCustomSaved)
+                crawler.CustomSave(context);
+            else
+            {
                 List<CrawlerResult> toSave = new List<CrawlerResult>();
                 foreach (var result in context.Results)
                 {
@@ -113,29 +140,31 @@ namespace ContentHunter.Web.Models.Engines
                     db.SaveChanges();
                     Index(toSave);
                 }
-
-                if (instruction.IsRecursive)
-                {
-                    Instruction recursiveInstruction = (Instruction)instruction.Clone();
-                    recursiveInstruction.IsOriginal = false;
-                    foreach (string link in context.CandidatesToRecursion)
-                    {
-                        recursiveInstruction.Url = link;
-                        Execute(recursiveInstruction);
-                    }
-                }
-
-                if (instruction.IsOriginal)
-                {
-                    instruction.FinishedAt = DateTime.Now;
-                    instruction.State = false;
-                    db.Entry(instruction).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
             }
 
-            return context;
+            if (instruction.IsRecursive)
+            {
+                Instruction recursiveInstruction = (Instruction)instruction.Clone();
+                recursiveInstruction.IsOriginal = false;
+                foreach (string link in context.CandidatesToRecursion)
+                {
+                    recursiveInstruction.Url = link;
+                    Execute(recursiveInstruction);
+                }
+            }
         }
+
+        private void FinalizeInstructionExecution(Instruction instruction)
+        {
+            if (instruction.IsOriginal)
+            {
+                instruction.FinishedAt = DateTime.Now;
+                instruction.State = false;
+                db.Entry(instruction).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
 
         private void Index(List<CrawlerResult> results)
         {
@@ -211,5 +240,11 @@ namespace ContentHunter.Web.Models.Engines
 
             return list;*/
         }
+
+        public virtual void CustomSave(ContextResult context)
+        {
+            throw new Exception("Not yet implemented");
+        }
+
     }
 }

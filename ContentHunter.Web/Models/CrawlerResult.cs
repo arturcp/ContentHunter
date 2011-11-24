@@ -36,5 +36,8 @@ namespace ContentHunter.Web.Models
 
         [StringLength(500)]
         public string Tags { get; set; }
+
+        [NotMapped]
+        public object CustomBag { get; set; }
     }
 }

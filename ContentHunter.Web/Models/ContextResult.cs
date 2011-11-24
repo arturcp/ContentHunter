@@ -15,6 +15,5 @@ namespace ContentHunter.Web.Models
 
         public List<CrawlerResult> Results{ get; set; }
         public List<string> CandidatesToRecursion { get; set; }
-
     }
 }
