@@ -27,7 +27,7 @@ namespace ContentHunter.Web.Models.Engines
 
         public void AddCandidateLink(ContextResult contextResult, string link)
         {
-            if (!VisitedLinks.Contains(link))
+            if (!VisitedLinks.Contains(link) && !contextResult.CandidatesToRecursion.Contains(link))
                 contextResult.CandidatesToRecursion.Add(link);
         }
 

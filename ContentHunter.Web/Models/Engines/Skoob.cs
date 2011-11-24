@@ -35,10 +35,10 @@ namespace ContentHunter.Web.Models.Engines
 
             HtmlNodeCollection candidateLinks = doc.DocumentNode.SelectNodes("//div[@id='resultadoBusca']//a[@class='l13' and position()=1]");
 
-            /* foreach (var link in candidateLinks)
-             {
-                 AddCandidateLink(context, string.Format("{0}{1}", "http://www.skoob.com.br", link.Attributes["href"].Value));
-             }*/
+            foreach (var link in candidateLinks)
+            {
+                AddCandidateLink(context, string.Format("{0}{1}", "http://www.skoob.com.br", link.Attributes["href"].Value));
+            }
 
             if (books != null)
             {
@@ -91,7 +91,7 @@ namespace ContentHunter.Web.Models.Engines
             var list = (from b in context.Results
                        select oSerializer.Serialize((Book)b.CustomBag)).ToArray<string>();
 
-            Persist(Input.Url.Replace(skoobUrl,string.Empty).Replace("/"," ").Trim().Replace(" ","-"), string.Join(",", list));
+            Persist(Input.Url.Replace(skoobUrl,string.Empty).Replace(":","-").Replace("/"," ").Trim().Replace(" ","-"), string.Join(",", list));
         }
 
         private void Persist(string fileName, string json)
