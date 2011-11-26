@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebToolkit.Converter;
-using ContentHunter.Web.Models;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -20,9 +17,15 @@ namespace ContentHunter.Web.Controllers
     {
         private string baseUrl = "http://www.skoob.com.br/{0}/{1}";
 
-        public ActionResult Index()
+        /**
+         * Dúvidas:
+         * Nome da imagem ao salvar no disco?
+         * Devo limpar o texto da descrição de uma editora? Devo salvar html ou plain text?
+         * */
+
+        public ActionResult GetBooks()
         {
-            Start(1, 100);
+            StartBooks(1, 100);
             /*Start(101, 200);
             Start(201, 300);
             Start(301, 400);
@@ -30,14 +33,29 @@ namespace ContentHunter.Web.Controllers
             return View();
         }
 
-        public ActionResult Show()
+        public ActionResult GetAuthors()
         {
-            //ParseAuthors(new Parameters() { StartId = 746, EndId = 746 });
-            ParseAuthors(new Parameters() { StartId = 11, EndId = 11 });
+            StartAuthors(11, 11); //Paulo Coelho
+            StartAuthors(34, 34); //Agatha Christie
+            StartAuthors(746, 746); //Eduardo Spohr
             return View("Index");
         }
 
-        private void Start(int startId, int endId)
+        public ActionResult GetImages()
+        {
+            StartImages(225, 225);            
+            return View("Index");
+        }
+
+        public ActionResult GetPublishers()
+        {
+            int[] ids = { 21, 16, 25, 18, 11, 12, 24, 19 };
+            StartPublishers(ids);
+            return View("Index");
+        }
+
+        #region Starts
+        private void StartBooks(int startId, int endId)
         {
             Thread t = new Thread(new ParameterizedThreadStart(ParseBooks));
             t.Start(new Parameters() { StartId = startId, EndId = endId });
@@ -48,6 +66,19 @@ namespace ContentHunter.Web.Controllers
             Thread t = new Thread(new ParameterizedThreadStart(ParseAuthors));
             t.Start(new Parameters() { StartId = startId, EndId = endId });
         }
+
+        private void StartImages(int startId, int endId)
+        {
+            Thread t = new Thread(new ParameterizedThreadStart(ParseImages));
+            t.Start(new Parameters() { StartId = startId, EndId = endId });
+        }
+
+        private void StartPublishers(int[] ids)
+        {
+            Thread t = new Thread(new ParameterizedThreadStart(ParsePublishers));
+            t.Start(new Parameters() { Ids = ids });
+        }
+        #endregion
 
         #region Books
         public void ParseBooks(object info)
@@ -117,31 +148,7 @@ namespace ContentHunter.Web.Controllers
                     CustomSave("Books", oSerializer.Serialize(books), parameters.StartId, parameters.EndId, id);
                 }
             }
-        }
-
-        private void CustomSave(string area, string json, int startId, int endId, int id)
-        {
-            JavaScriptSerializer oSerializer = new JavaScriptSerializer();
-            string uri = string.Format(@"\Skoob\{2}\{0}-{1}\", startId, endId, area);
-            string path = IndexSettings.IndexPath.Replace("\\Index\\", uri);
-
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            string filePath = Path.Combine(path, string.Concat(id.ToString(), ".json"));
-
-            if (System.IO.File.Exists(filePath))
-            {
-                DateTime now = DateTime.Now;
-                string bkpPattern = string.Format("{0}-{1}-{2}_{3}-{4}-{5}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-                System.IO.File.Copy(filePath, filePath.Replace(".json", "." + bkpPattern + ".json"));
-            }
-
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-                writer.Write(json);
-            }
-        }
+        }       
 
         private Book SetBookData(Book book, string field, string value)
         {
@@ -232,24 +239,46 @@ namespace ContentHunter.Web.Controllers
                     }
                     else
                     {
-                        HtmlDocument booksDoc = new HtmlDocument();
-                        booksDoc.LoadHtml(GetContent(string.Format(baseUrl, "autor/livros", id), ref httpCode));
-
-                        if (httpCode == 200)
+                        List<string> visitedLinks = new List<string>();
+                        List<string> linksToVisit = new List<string>();
+                        string booksFromAuthorUrl = string.Format(baseUrl, "autor/livros", id + "/page:1");
+                        AddBooksToAuthor(author, booksFromAuthorUrl, visitedLinks, linksToVisit);
+                        while (linksToVisit.Count > 0)
                         {
-                            HtmlNodeCollection books = booksDoc.DocumentNode.SelectNodes("//div[preceding-sibling::div[@id='menubusca']]//div[position()=3]//a");
-                            if (books != null)
-                            {
-                                foreach (HtmlNode link in books)
-                                {
-                                    author.Books.Add(link.Attributes["href"].Value.Replace("/livro/", "").Split('-')[0]);
-                                }
-                            }
+                            AddBooksToAuthor(author, linksToVisit[0], visitedLinks, linksToVisit);
                         }
                     }
-
-
                     CustomSave("Authors", oSerializer.Serialize(author), parameters.StartId, parameters.EndId, id);
+                }
+            }
+        }
+
+        private void AddBooksToAuthor(Author author, string url, List<string> visitedLinks, List<string> linksToVisit)
+        {
+            visitedLinks.Add(url);
+            linksToVisit.Remove(url);
+            HtmlDocument booksDoc = new HtmlDocument();
+            int httpCode = 0;
+            booksDoc.LoadHtml(GetContent(url, ref httpCode));
+
+            if (httpCode == 200)
+            {
+                HtmlNodeCollection books = booksDoc.DocumentNode.SelectNodes("//div[preceding-sibling::div[@id='menubusca']]//div[position()=3]//a");
+                if (books != null)
+                {
+                    string href = string.Empty;
+                    foreach (HtmlNode link in books)
+                    {
+                        href = link.Attributes["href"].Value.Replace("/livro/", "").Split('-')[0];
+                        if (href.StartsWith("/autor/livros/"))
+                        {
+                            href = "http://www.skoob.com.br" + href;
+                            if (!visitedLinks.Contains(href) && !linksToVisit.Contains(href))
+                                linksToVisit.Add(href);
+                        }
+                        else
+                            author.Books.Add(href);
+                    }
                 }
             }
         }
@@ -280,6 +309,100 @@ namespace ContentHunter.Web.Controllers
         }
         #endregion
 
+        #region Images
+        public void ParseImages(object info)
+        {
+            Parameters parameters = (Parameters)info;            
+            string url = string.Empty;
+            int httpCode = 0;
+
+            for (int id = parameters.StartId; id <= parameters.EndId; id++)
+            {                
+                url = string.Format(baseUrl, "livro/edicoes", id);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(GetContent(url, ref httpCode));
+
+                if (httpCode == 200)
+                {
+                     HtmlNodeCollection editions = doc.DocumentNode.SelectNodes("//div[preceding-sibling::div[@id='menubusca']]//div[position()=3]//div[@style='float:left; font-size:11px; font-family:arial; margin:10px 8px 0px 0px; width:250px; border:red 0px solid; line-height:18px;']");
+                     if (editions != null)
+                     {
+                         foreach (HtmlNode edition in editions)
+                         {
+                             HtmlNode img = edition.SelectSingleNode(".//img");
+                             if (img != null && img.Attributes["src"].Value != "/img/geral/semcapa_m.gif")
+                                 SaveImage(img.Attributes["src"].Value, parameters.StartId, parameters.EndId, id);
+                         }
+                     }                
+                }
+            }        
+        }
+
+        private void SaveImage(string url, int startId, int endId, int id)
+        {
+            string uri = string.Format(@"\Skoob\{2}\{0}-{1}\", startId, endId, "Images");
+            string path = IndexSettings.IndexPath.Replace("\\Index\\", uri);
+            string[] parts = url.Split('/');
+            string imageName = parts[parts.Length - 1];
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string filePath = Path.Combine(path, imageName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                DateTime now = DateTime.Now;
+                string bkpPattern = string.Format("{0}-{1}-{2}_{3}-{4}-{5}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+                System.IO.File.Copy(filePath, filePath.Replace(".jpg", "." + bkpPattern + ".jpg"));
+            }
+
+            using (WebClient crawler = new WebClient())
+            {
+                crawler.DownloadFile(url, filePath);
+            }
+        }
+        #endregion
+
+        #region Publishers
+        public void ParsePublishers(object info)
+        {
+            JavaScriptSerializer oSerializer = new JavaScriptSerializer();
+            Parameters parameters = (Parameters)info;
+            string url = string.Empty;
+            int httpCode = 0;
+            foreach (int id in parameters.Ids)
+            {
+                url = string.Format(baseUrl, "editora", id);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(GetContent(url, ref httpCode));
+
+                if (httpCode == 200)
+                {
+                    Publisher publisher = new Publisher();
+                    publisher.Id = id;
+
+                    HtmlNode name = doc.DocumentNode.SelectSingleNode("//h1[@class='titulo_editora']");
+                    publisher.Name = string.Empty;
+                    if (name != null)
+                        publisher.Name = name.InnerText;
+
+                    HtmlNode description = doc.DocumentNode.SelectSingleNode("//div[@id='historico']");
+                    publisher.Description = string.Empty;
+                    if (description != null)
+                        publisher.Description = description.InnerHtml;
+
+                    HtmlNode image = doc.DocumentNode.SelectSingleNode("//div[@id='menu']//img");
+                    publisher.Image = string.Empty;
+                    if (image != null)
+                        publisher.Image = "http://www.skoob.com.br" + image.Attributes["src"].Value;
+
+                    CustomSave("Publishers", oSerializer.Serialize(publisher), 0, 100, id);
+                }
+            }
+        }
+        #endregion
+
         public string GetContent(string url, ref int httpCode)
         {
             string content = string.Empty;
@@ -303,6 +426,28 @@ namespace ContentHunter.Web.Controllers
             return content;
         }
 
+        private void CustomSave(string area, string json, int startId, int endId, int id)
+        {
+            string uri = string.Format(@"\Skoob\{2}\{0}-{1}\", startId, endId, area);
+            string path = IndexSettings.IndexPath.Replace("\\Index\\", uri);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string filePath = Path.Combine(path, string.Concat(id.ToString(), ".json"));
+
+            if (System.IO.File.Exists(filePath))
+            {
+                DateTime now = DateTime.Now;
+                string bkpPattern = string.Format("{0}-{1}-{2}_{3}-{4}-{5}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+                System.IO.File.Copy(filePath, filePath.Replace(".json", "." + bkpPattern + ".json"));
+            }
+
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                writer.Write(json);
+            }
+        }
     }
 
     class Book
@@ -319,7 +464,6 @@ namespace ContentHunter.Web.Controllers
         public int Year { get; set; }
         public int Pages { get; set; }
         public string Translators { get; set; }
-
     }
 
     class Author
@@ -341,10 +485,24 @@ namespace ContentHunter.Web.Controllers
         public string Image { get; set; }
     }
 
+    class Publisher
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Image { get; set; }
+        public string Site { get; set; }
+        public string Blog { get; set; }
+        public string Facebook { get; set; }
+        public List<string> Authors { get; set; }
+        public List<string> Books { get; set; }
+    }
+
     class Parameters
     {
         public int StartId { get; set; }
         public int EndId { get; set; }
+        public int[] Ids { get; set; }
     }
 
     class ISBN
