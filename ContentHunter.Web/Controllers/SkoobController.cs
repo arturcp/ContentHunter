@@ -30,7 +30,7 @@ namespace ContentHunter.Web.Controllers
             Start(201, 300);
             Start(301, 400);
             Start(401, 500);*/
-            return View();
+            return View("Index");
         }
 
         public ActionResult GetAuthors()
@@ -43,7 +43,8 @@ namespace ContentHunter.Web.Controllers
 
         public ActionResult GetImages()
         {
-            StartImages(225, 225);            
+            //StartImages(225, 225);            
+            StartImages(1, 37);
             return View("Index");
         }
 
@@ -70,7 +71,8 @@ namespace ContentHunter.Web.Controllers
 
         private void StartImages(int startId, int endId)
         {
-            Thread t = new Thread(new ParameterizedThreadStart(ParseImages));
+            //Thread t = new Thread(new ParameterizedThreadStart(ParseImages));
+            Thread t = new Thread(new ParameterizedThreadStart(ParseImagesFromFile));            
             t.Start(new Parameters() { StartId = startId, EndId = endId });
         }
 
@@ -337,7 +339,35 @@ namespace ContentHunter.Web.Controllers
                          }
                      }                
                 }
-            }        
+            }
+        }
+
+        public void ParseImagesFromFile(object info)
+        {
+            Parameters parameters = (Parameters)info;
+            string uri = @"\Skoob\Books\All\";
+            string path = IndexSettings.IndexPath.Replace("\\Index\\", uri);
+            string content = string.Empty;
+
+            for (int id = parameters.StartId; id <= parameters.EndId; id++)
+            {
+                content = string.Empty;
+                using (StreamReader reader = new StreamReader(Path.Combine(path, id + ".json")))
+                {
+                    content = reader.ReadToEnd();
+                    if (content.Length > 0)
+                    {
+                        MatchCollection matches = Regex.Matches(content, "\"Cover\":\"([\\w.:\\\\/_-]+)\"", RegexOptions.IgnoreCase);
+
+                        foreach (Match m in matches)
+                        {
+                            if (m.Success)
+                                SaveImage(m.Groups[1].Value, parameters.StartId, parameters.EndId, id, "Books");
+                        }
+
+                    }
+                }               
+            }
         }
 
         private void SaveImage(string url, int startId, int endId, int id, string category)
