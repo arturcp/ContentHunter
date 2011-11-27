@@ -50,6 +50,7 @@ namespace ContentHunter.Web.Controllers
         public ActionResult GetPublishers()
         {
             int[] ids = { 21, 16, 25, 18, 11, 12, 24, 19 };
+            //int[] ids = { 21 };
             StartPublishers(ids);
             return View("Index");
         }
@@ -249,6 +250,7 @@ namespace ContentHunter.Web.Controllers
                         }
                     }
                     CustomSave("Authors", oSerializer.Serialize(author), parameters.StartId, parameters.EndId, id);
+                    SaveImage(author.Image, parameters.StartId, parameters.EndId, id, "Authors");
                 }
             }
         }
@@ -331,16 +333,16 @@ namespace ContentHunter.Web.Controllers
                          {
                              HtmlNode img = edition.SelectSingleNode(".//img");
                              if (img != null && img.Attributes["src"].Value != "/img/geral/semcapa_m.gif")
-                                 SaveImage(img.Attributes["src"].Value, parameters.StartId, parameters.EndId, id);
+                                 SaveImage(img.Attributes["src"].Value, parameters.StartId, parameters.EndId, id, "Books");
                          }
                      }                
                 }
             }        
         }
 
-        private void SaveImage(string url, int startId, int endId, int id)
+        private void SaveImage(string url, int startId, int endId, int id, string category)
         {
-            string uri = string.Format(@"\Skoob\{2}\{0}-{1}\", startId, endId, "Images");
+            string uri = string.Format(@"\Skoob\{2}\{3}\{0}-{1}\", startId, endId, "Images", category);
             string path = IndexSettings.IndexPath.Replace("\\Index\\", uri);
             string[] parts = url.Split('/');
             string imageName = parts[parts.Length - 1];
@@ -397,10 +399,86 @@ namespace ContentHunter.Web.Controllers
                     if (image != null)
                         publisher.Image = "http://www.skoob.com.br" + image.Attributes["src"].Value;
 
+                    HtmlNodeCollection authors = doc.DocumentNode.SelectNodes("//div[@class='viewport']//ul[@class='overview']//li//img");
+
+                    if (authors != null)
+                    {
+                        string[] parts;
+                        foreach (HtmlNode link in authors)
+                        {
+                            parts = link.Attributes["src"].Value.Split('/');
+                            publisher.Authors.Add(parts[parts.Length-2]);
+                        }
+                    }
+
+                    HtmlNode blog = doc.DocumentNode.SelectSingleNode("//a[text()='Blog']");
+                    publisher.Blog = string.Empty;
+                    if (blog != null)
+                        publisher.Blog = blog.Attributes["href"].Value;
+
+                    HtmlNode site = doc.DocumentNode.SelectSingleNode("//a[text()='Site oficial']");
+                    publisher.Site = string.Empty;
+                    if (site != null)
+                        publisher.Site = site.Attributes["href"].Value;
+
+                    string network = string.Empty;
+                    HtmlNodeCollection networks = doc.DocumentNode.SelectNodes("//a[child::img[@class='logoredes']]");
+                    if (networks != null)
+                    {
+                        foreach (HtmlNode link in networks)
+                        {
+                            publisher.AddNetworkLink(link.Attributes["href"].Value);
+                        }
+                    }
+        
+                    List<string> visitedLinks = new List<string>();
+                    List<string> linksToVisit = new List<string>();
+                    url = string.Concat(string.Format(baseUrl, "editora/livros", id), "/mpage:1");
+                    AddBooksToPublisher(publisher, url, visitedLinks, linksToVisit);
+                    while (linksToVisit.Count > 0)
+                    {
+                        AddBooksToPublisher(publisher, linksToVisit[0], visitedLinks, linksToVisit);
+                    }
+
                     CustomSave("Publishers", oSerializer.Serialize(publisher), 0, 100, id);
+                    SaveImage(publisher.Image, 0, 100, id, "Publishers");
                 }
             }
         }
+
+        private void AddBooksToPublisher(Publisher publisher, string url, List<string> visitedLinks, List<string> linksToVisit)
+        {
+            visitedLinks.Add(url);
+            linksToVisit.Remove(url);
+            HtmlDocument doc = new HtmlDocument();
+            int httpCode = 0;
+            doc.LoadHtml(GetContent(url, ref httpCode));
+
+            if (httpCode == 200)
+            {
+                HtmlNodeCollection books = doc.DocumentNode.SelectNodes("//div[@id='conteudo']//a[not(@class='l11')]");
+                if (books != null)
+                {
+                    string href = string.Empty;
+                    foreach (HtmlNode link in books)
+                    {
+                        href = link.Attributes["href"].Value;
+                        if (href.StartsWith("/editora/livros/"))
+                        {
+                            href = "http://www.skoob.com.br" + href;
+                            if (!visitedLinks.Contains(href) && !linksToVisit.Contains(href))
+                                linksToVisit.Add(href);
+                        }
+                        else
+                        {
+                            href = href.Replace("/livro/", "").Split('-')[0];
+                            publisher.Books.Add(href);
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion
 
         public string GetContent(string url, ref int httpCode)
@@ -487,6 +565,11 @@ namespace ContentHunter.Web.Controllers
 
     class Publisher
     {
+        public Publisher()
+        {
+            Authors = new List<string>();
+            Books = new List<string>();
+        }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -494,8 +577,23 @@ namespace ContentHunter.Web.Controllers
         public string Site { get; set; }
         public string Blog { get; set; }
         public string Facebook { get; set; }
+        public string Twitter { get; set; }
+        public string Youtube { get; set; }
+        public string Orkut { get; set; }
         public List<string> Authors { get; set; }
         public List<string> Books { get; set; }
+
+        public void AddNetworkLink(string url)
+        {
+            if (url.IndexOf("facebook") > -1)
+                Facebook = url;
+            else if (url.IndexOf("twitter") > -1)
+                Twitter = url;
+            else if (url.IndexOf("youtube") > -1)
+                Youtube = url;
+            else if (url.IndexOf("orkut") > -1)
+                Orkut = url;
+        }
     }
 
     class Parameters
