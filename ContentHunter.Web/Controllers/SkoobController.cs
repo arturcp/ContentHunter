@@ -25,21 +25,13 @@ namespace ContentHunter.Web.Controllers
 
         public ActionResult GetBooks()
         {
-<<<<<<< HEAD
-            Start(1, 40000);
-            Start(40001, 80000);
-            Start(80001, 120000);
-            Start(120001, 160000);
-            Start(160001, 196597);
-            return View();
-=======
-            StartBooks(1, 100);
-            /*Start(101, 200);
-            Start(201, 300);
-            Start(301, 400);
-            Start(401, 500);*/
+            StartBooks(1, 40000);
+            StartBooks(40001, 80000);
+            StartBooks(80001, 120000);
+            StartBooks(120001, 160000);
+            StartBooks(160001, 196597);
             return View("Index");
->>>>>>> f9b25afefa553b94010c6d059721cea7c9d29b72
+
         }
 
         public ActionResult GetAuthors()
