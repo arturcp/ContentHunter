@@ -22,11 +22,11 @@ namespace ContentHunter.Web.Controllers
 
         public ActionResult Index()
         {
-            Start(1, 100);
-            /*Start(101, 200);
-            Start(201, 300);
-            Start(301, 400);
-            Start(401, 500);*/
+            Start(1, 40000);
+            Start(40001, 80000);
+            Start(80001, 120000);
+            Start(120001, 160000);
+            Start(160001, 196597);
             return View();
         }
 
