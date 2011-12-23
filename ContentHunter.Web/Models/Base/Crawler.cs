@@ -10,6 +10,7 @@ using WebToolkit.Index;
 using Lucene.Net.Documents;
 using System.Data;
 using System.Text;
+using System.Data.Entity.Validation;
 
 namespace ContentHunter.Web.Models.Engines
 {
@@ -53,7 +54,7 @@ namespace ContentHunter.Web.Models.Engines
                 {
                     try
                     {
-                        content = new StreamReader(crawler.OpenRead(url), Encoding.Default).ReadToEnd();
+                        content = new StreamReader(crawler.OpenRead(url), Encoding.UTF8).ReadToEnd();
                     }
                     catch (WebException error)
                     {
@@ -137,7 +138,22 @@ namespace ContentHunter.Web.Models.Engines
 
                 if (toSave.Count > 0)
                 {
-                    db.SaveChanges();
+                    try
+                    {
+                        db.SaveChanges();
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                string p = validationError.PropertyName;
+                                string e = validationError.ErrorMessage;
+                                //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                            }
+                        }
+                    }
                     Index(toSave);
                 }
             }
@@ -161,7 +177,22 @@ namespace ContentHunter.Web.Models.Engines
                 instruction.FinishedAt = DateTime.Now;
                 instruction.State = false;
                 db.Entry(instruction).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            string p = validationError.PropertyName;
+                            string e = validationError.ErrorMessage;
+                            //Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                        }
+                    }
+                }
             }
         }
 

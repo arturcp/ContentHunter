@@ -24,9 +24,12 @@ namespace ContentHunter.Web.Models.Engines
 
             HtmlNodeCollection candidateLinks = doc.DocumentNode.SelectNodes("//div[@id='postnav']//a[contains(.,'Próxima')]");
 
-            foreach (var link in candidateLinks)
+            if (candidateLinks != null)
             {
-                AddCandidateLink(context, link.Attributes["href"].Value);
+                foreach (var link in candidateLinks)
+                {
+                    AddCandidateLink(context, link.Attributes["href"].Value);
+                }
             }
             
             foreach (HtmlNode post in posts)
@@ -38,12 +41,23 @@ namespace ContentHunter.Web.Models.Engines
 
                 if (title != null && content != null)
                 {
-                    if (title.ChildNodes.Count > 0 && title.ChildNodes[0].Attributes["href"] != null)
-                        output.Url = title.ChildNodes[0].Attributes["href"].Value;
+                    HtmlNode postUrl = title.SelectSingleNode(".//a");
+                    //if (title.ChildNodes.Count > 0 && title.ChildNodes[0].Attributes["href"] != null)
+                        //output.Url = title.ChildNodes[0].Attributes["href"].Value;
+                    if (postUrl != null)
+                        output.Url = postUrl.Attributes["href"].Value;
+                        
 
                     output.Title = System.Web.HttpUtility.HtmlDecode(title.InnerText);
                     output.Content = content.InnerHtml;
                     //var aux = Sanitize.Strip(output.Content);
+
+                    HtmlNode date = post.SelectSingleNode(".//h3[@class='storytitle']//span[@class='date']");
+
+                    if (date != null)
+                    {
+                        output.Data = (new LeitoraCompulsivaData() { Date = date.InnerText }).ToJson();
+                    }
 
                     if (tags != null)
                     {
@@ -71,6 +85,16 @@ namespace ContentHunter.Web.Models.Engines
         {
             System.Threading.Thread.Sleep(35000);
             return new ContextResult();
+        }
+    }
+
+    class LeitoraCompulsivaData
+    {
+        public string Date { get; set; }
+
+        public string ToJson()
+        {
+            return new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(this);
         }
     }
 }

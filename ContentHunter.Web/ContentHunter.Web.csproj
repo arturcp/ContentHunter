@@ -74,6 +74,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\APIController.cs" />
     <Compile Include="Controllers\ExecutionController.cs" />
     <Compile Include="Controllers\InstructionController.cs" />
     <Compile Include="Controllers\SkoobController.cs" />
